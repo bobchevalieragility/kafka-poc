@@ -1,0 +1,3 @@
+include:
+  #  - moto/compose.moto.yaml
+  - kafka/compose.kafka.yaml

@@ -1,0 +1,16 @@
+services:
+  moto-server:
+    image: motoserver/moto:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - MOTO_PORT=3000
+
+  moto-setup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - moto-server
+    environment:
+      - AWS_PROFILE=local
