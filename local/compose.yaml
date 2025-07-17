@@ -1,3 +1,14 @@
 include:
-  #  - moto/compose.moto.yaml
+  - moto/compose.moto.yaml
   - kafka/compose.kafka.yaml
+
+services:
+  producer:
+    build:
+      context: ../
+      dockerfile: Dockerfile.producer
+    ports:
+      - "8090:8080"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test

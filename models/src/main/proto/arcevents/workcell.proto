@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package arcevents.workcell;
+option java_package = "com.agilityrobotics.models.arcevents.workcell";
+option java_multiple_files = true;
+option java_generic_services = false;
+option py_generic_services = false;
+
+message ShiftStart {
+    string foo = 1;
+}
