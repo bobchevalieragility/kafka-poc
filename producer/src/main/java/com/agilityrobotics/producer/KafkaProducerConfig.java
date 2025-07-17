@@ -14,7 +14,6 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-// @RequiredArgsConstructor
 public class KafkaProducerConfig {
 
   @Bean
@@ -24,23 +23,25 @@ public class KafkaProducerConfig {
     props.put(AWSSchemaRegistryConstants.DATA_FORMAT, DataFormat.PROTOBUF.name());
     props.put(AWSSchemaRegistryConstants.AWS_ENDPOINT, "http://moto-server:3000");
     props.put(AWSSchemaRegistryConstants.AWS_REGION, "us-west-2");
-    // props.put(AWSSchemaRegistryConstants.REGISTRY_NAME, "my-registry");
+    // if REGISTRY_NAME is not set, schemas will be published to "default-registry"
+    props.put(AWSSchemaRegistryConstants.REGISTRY_NAME, "arc-registry");
     props.put(AWSSchemaRegistryConstants.SCHEMA_AUTO_REGISTRATION_SETTING, "true");
+    // Use a custom schema naming strategy to store schemas in the registry by
+    // record name instead of by topic name. This allows us to publish multiple
+    // schema types to the same topic.
+    props.put(AWSSchemaRegistryConstants.SCHEMA_NAMING_GENERATION_CLASS,
+        "com.agilityrobotics.models.protobuf.RecordSchemaNamingStrategy");
     // props.put(AWSSchemaRegistryConstants.SCHEMA_NAME, "protobuf-file-name.proto")
     // props.put(AWSSchemaRegistryConstants.SCHEMA_NAME, "my-schema"); // If not
     // passed, uses transport name (topic name in
     // // case of Kafka, or stream name in case of Kinesis
     // // Data Streams)
-    // props.put(AWSSchemaRegistryConstants.REGISTRY_NAME, "my-registry"); // If not
-    // passed, uses "default-registry"
     // props.put(AWSSchemaRegistryConstants.CACHE_TIME_TO_LIVE_MILLIS, "86400000");
     // // If not passed, uses 86400000 (24
     // // Hours)
     // props.put(AWSSchemaRegistryConstants.CACHE_SIZE, "10"); // default value is
     // 200
-    props.put(AWSSchemaRegistryConstants.COMPATIBILITY_SETTING, Compatibility.FULL); // Pass a compatibility mode. If
-                                                                                     // not passed, uses
-                                                                                     // Compatibility.BACKWARD
+    props.put(AWSSchemaRegistryConstants.COMPATIBILITY_SETTING, Compatibility.FULL); // not passed, uses
     // props.put(AWSSchemaRegistryConstants.DESCRIPTION, "This registry is used for
     // several purposes."); // If not passed,
     // // constructs a

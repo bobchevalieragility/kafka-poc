@@ -1,5 +1,5 @@
 # The first stage caches dependencies
-FROM maven:3.9.10-amazoncorretto-21 AS DEPENDENCIES
+FROM maven:3.9.10-amazoncorretto-21 AS dependencies
 
 WORKDIR /app
 COPY pom.xml .
@@ -9,11 +9,11 @@ COPY producer/pom.xml producer/pom.xml
 RUN mvn -pl "models,producer" -B -e org.apache.maven.plugins:maven-dependency-plugin:3.8.1:go-offline -DexcludeArtifacts=models
 
 # The second stage builds the image
-FROM maven:3.9.10-amazoncorretto-21 AS BUILDER
+FROM maven:3.9.10-amazoncorretto-21 AS builder
 
 WORKDIR /app
-COPY --from=DEPENDENCIES /root/.m2 /root/.m2
-COPY --from=DEPENDENCIES /app /app
+COPY --from=dependencies /root/.m2 /root/.m2
+COPY --from=dependencies /app /app
 COPY models/src /app/models/src
 COPY producer/src /app/producer/src
 
@@ -23,7 +23,7 @@ RUN mvn -pl "models,producer" -B -e clean install -DskipTests
 FROM openjdk:21-slim
 
 WORKDIR /app
-COPY --from=BUILDER /app/producer/target/*.jar /app.jar
+COPY --from=builder /app/producer/target/*.jar /app.jar
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]

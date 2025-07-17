@@ -337,4 +337,8 @@ done
 #  --kafka-version "4.0.0" \
 #  --number-of-broker-nodes 1
 
+/usr/local/bin/aws glue create-registry \
+  --registry-name arc-registry \
+  --description "Registry for all ARC-related Protocol Buffers schemas"
+
 #tail -f /dev/null
