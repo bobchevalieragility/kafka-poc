@@ -25,4 +25,3 @@ Proof of concept for using Kafka with Protobuf and Glue Schema Registry
     export AWS_PROFILE=local
     aws glue get-schema --schema-id '{"SchemaName": "arcevents.workcell.ShiftStart", "RegistryName": "arc-registry"}'
     ```
-5. The consumer logs should show that a message was received on the arc-events topic
