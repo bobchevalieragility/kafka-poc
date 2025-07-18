@@ -9,3 +9,7 @@ option py_generic_services = false;
 message ShiftStart {
     string foo = 1;
 }
+
+message InterventionStart {
+    string bar = 1;
+}
