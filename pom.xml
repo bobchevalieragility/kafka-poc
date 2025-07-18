@@ -59,6 +59,7 @@
   </dependencyManagement>
 
   <modules>
+    <module>consumer</module>
     <module>models</module>
     <module>producer</module>
   </modules>

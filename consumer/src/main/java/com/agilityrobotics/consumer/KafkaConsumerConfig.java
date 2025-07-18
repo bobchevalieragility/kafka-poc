@@ -1,4 +1,4 @@
-package com.agilityrobotics.producer;
+package com.agilityrobotics.consumer;
 
 import com.amazonaws.services.schemaregistry.utils.AWSSchemaRegistryConstants;
 import com.google.protobuf.DynamicMessage;
@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import software.amazon.awssdk.services.glue.model.Compatibility;
 import software.amazon.awssdk.services.glue.model.DataFormat;
 
@@ -15,12 +16,18 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-public class KafkaProducerConfig {
+public class KafkaConsumerConfig {
 
   @Bean
-  public KafkaTemplate<String, DynamicMessage> kafkaTemplate(
+  public ConcurrentKafkaListenerContainerFactory<String, DynamicMessage> kafkaListenerContainerFactory(
       KafkaProperties kafkaProperties) {
-    Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
+    ConcurrentKafkaListenerContainerFactory<String, DynamicMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(defaultConsumerFactory(kafkaProperties));
+    return factory;
+  }
+
+  private ConsumerFactory<String, DynamicMessage> defaultConsumerFactory(KafkaProperties kafkaProperties) {
+    Map<String, Object> props = kafkaProperties.buildConsumerProperties(null);
     props.put(AWSSchemaRegistryConstants.DATA_FORMAT, DataFormat.PROTOBUF.name());
     props.put(AWSSchemaRegistryConstants.AWS_ENDPOINT, "http://moto-server:3000");
     props.put(AWSSchemaRegistryConstants.AWS_REGION, "us-west-2");
@@ -32,27 +39,8 @@ public class KafkaProducerConfig {
     // schema types to the same topic.
     props.put(AWSSchemaRegistryConstants.SCHEMA_NAMING_GENERATION_CLASS,
         "com.agilityrobotics.models.protobuf.RecordSchemaNamingStrategy");
-    // props.put(AWSSchemaRegistryConstants.SCHEMA_NAME, "protobuf-file-name.proto")
-    // props.put(AWSSchemaRegistryConstants.SCHEMA_NAME, "my-schema"); // If not
-    // passed, uses transport name (topic name in
-    // // case of Kafka, or stream name in case of Kinesis
-    // // Data Streams)
-    // props.put(AWSSchemaRegistryConstants.CACHE_TIME_TO_LIVE_MILLIS, "86400000");
-    // // If not passed, uses 86400000 (24
-    // // Hours)
-    // props.put(AWSSchemaRegistryConstants.CACHE_SIZE, "10"); // default value is
-    // 200
     props.put(AWSSchemaRegistryConstants.COMPATIBILITY_SETTING, Compatibility.FULL); // not passed, uses
-    // props.put(AWSSchemaRegistryConstants.DESCRIPTION, "This registry is used for
-    // several purposes."); // If not passed,
-    // // constructs a
-    // // description
-    // props.put(AWSSchemaRegistryConstants.COMPRESSION_TYPE,
-    // AWSSchemaRegistryConstants.COMPRESSION.ZLIB); // If not
-    // passed,
-    // records are
-    // sent
-    // uncompressed
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
+
+    return new DefaultKafkaConsumerFactory<>(props);
   }
 }

@@ -1,6 +1,7 @@
 package com.agilityrobotics.producer;
 
 import com.agilityrobotics.models.arcevents.workcell.ShiftStart;
+import com.google.protobuf.DynamicMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,8 @@ public class ProducerController {
 
   @PostMapping("/publish")
   public void updateAvailability(@RequestBody String val) {
-    final ShiftStart msg = ShiftStart.newBuilder().setFoo(val).build();
+    final ShiftStart event = ShiftStart.newBuilder().setFoo(val).build();
+    final DynamicMessage msg = DynamicMessage.newBuilder(event).build();
     this.eventPublisher.sendMessage("arc-events", msg);
   }
 
