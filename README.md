@@ -18,7 +18,7 @@ Proof of concept for using Kafka with Protobuf and Glue Schema Registry
 2. docker compose build
 3. Open another terminal and trigger the producer to publish two messages to the "arc-events" Kafka topic:
     ```bash
-    curl -X POST localhost:8090/publish -d 'hello'
+    curl -X POST localhost:8090/publish -H 'Content-Type: application/json' -d '{"val": "hello"}'
     ```
 4. There should now be one schema named "arc-events" in the "arc-registry" registry. You can verify by running:
     ```bash

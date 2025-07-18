@@ -24,10 +24,10 @@ public class EventConsumer {
     // }
     switch (msg.getEventCase()) {
       case SHIFT_START:
-        System.out.println("Consumed a SHIFT_START event: foo=" + msg.getShiftStart().getFoo());
+        System.out.println("Consumed a SHIFT_START event: " + msg.getShiftStart().toString());
         break;
       case INTERVENTION_START:
-        System.out.println("Consumed a INTERVENTION_START event: bar=" + msg.getInterventionStart().getBar());
+        System.out.println("Consumed a INTERVENTION_START event: " + msg.toString());
         break;
       default:
         System.out.println("Unexpected type - this shouldn't happen");
