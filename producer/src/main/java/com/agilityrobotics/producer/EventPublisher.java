@@ -1,6 +1,6 @@
 package com.agilityrobotics.producer;
 
-import com.google.protobuf.DynamicMessage;
+import com.agilityrobotics.models.arcevents.ArcEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 public class EventPublisher {
 
   @Autowired
-  private final KafkaTemplate<String, DynamicMessage> kafkaTemplate;
+  private final KafkaTemplate<String, ArcEvent> kafkaTemplate;
 
-  EventPublisher(final KafkaTemplate<String, DynamicMessage> kafkaTemplate) {
+  EventPublisher(final KafkaTemplate<String, ArcEvent> kafkaTemplate) {
     this.kafkaTemplate = kafkaTemplate;
   }
 
-  public void sendMessage(final String topic, final DynamicMessage msg) {
+  public void sendMessage(final String topic, final ArcEvent msg) {
     this.kafkaTemplate.send(topic, msg);
   }
 

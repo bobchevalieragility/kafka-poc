@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package arcevents;
+option java_package = "com.agilityrobotics.models.arcevents";
+option java_multiple_files = true;
+option java_generic_services = false;
+option py_generic_services = false;
+
+import "google/protobuf/timestamp.proto";
+
+message ArcEvent {
+  string id = 1;
+  google.protobuf.Timestamp event_time = 2;
+
+  oneof event {
+    arcevents.ShiftStart shift_start = 3;
+    arcevents.InterventionStart intervention_start = 4;
+  }
+}
+
+message ShiftStart {
+  string foo = 1;
+}
+
+message InterventionStart {
+  string bar = 1;
+}

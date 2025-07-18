@@ -1,8 +1,9 @@
 package com.agilityrobotics.producer;
 
-import com.agilityrobotics.models.arcevents.workcell.InterventionStart;
-import com.agilityrobotics.models.arcevents.workcell.ShiftStart;
-import com.google.protobuf.DynamicMessage;
+import com.agilityrobotics.models.arcevents.ArcEvent;
+import com.agilityrobotics.models.arcevents.InterventionStart;
+import com.agilityrobotics.models.arcevents.ShiftStart;
+import com.google.protobuf.Timestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +23,17 @@ public class ProducerController {
   public void updateAvailability(@RequestBody String val) {
     // Publish two different events to the same Kafka topic
     final ShiftStart shiftEvent = ShiftStart.newBuilder().setFoo(val).build();
-    DynamicMessage msg = DynamicMessage.newBuilder(shiftEvent).build();
+    long millis = System.currentTimeMillis();
+    Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+        .setNanos((int) ((millis % 1000) * 1000000)).build();
+    ArcEvent msg = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
     this.eventPublisher.sendMessage("arc-events", msg);
 
     final InterventionStart interventionEvent = InterventionStart.newBuilder().setBar(val).build();
-    msg = DynamicMessage.newBuilder(interventionEvent).build();
+    millis = System.currentTimeMillis();
+    timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+        .setNanos((int) ((millis % 1000) * 1000000)).build();
+    msg = ArcEvent.newBuilder().setId("234").setEventTime(timestamp).setInterventionStart(interventionEvent).build();
     this.eventPublisher.sendMessage("arc-events", msg);
   }
 

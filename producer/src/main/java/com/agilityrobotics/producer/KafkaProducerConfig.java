@@ -1,7 +1,7 @@
 package com.agilityrobotics.producer;
 
+import com.agilityrobotics.models.arcevents.ArcEvent;
 import com.amazonaws.services.schemaregistry.utils.AWSSchemaRegistryConstants;
-import com.google.protobuf.DynamicMessage;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
   @Bean
-  public KafkaTemplate<String, DynamicMessage> kafkaTemplate(
+  public KafkaTemplate<String, ArcEvent> kafkaTemplate(
       KafkaProperties kafkaProperties) {
     Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
     props.put(AWSSchemaRegistryConstants.DATA_FORMAT, DataFormat.PROTOBUF.name());
@@ -30,29 +30,12 @@ public class KafkaProducerConfig {
     // Use a custom schema naming strategy to store schemas in the registry by
     // record name instead of by topic name. This allows us to publish multiple
     // schema types to the same topic.
-    props.put(AWSSchemaRegistryConstants.SCHEMA_NAMING_GENERATION_CLASS,
-        "com.agilityrobotics.models.protobuf.RecordSchemaNamingStrategy");
-    // props.put(AWSSchemaRegistryConstants.SCHEMA_NAME, "protobuf-file-name.proto")
-    // props.put(AWSSchemaRegistryConstants.SCHEMA_NAME, "my-schema"); // If not
-    // passed, uses transport name (topic name in
-    // // case of Kafka, or stream name in case of Kinesis
-    // // Data Streams)
-    // props.put(AWSSchemaRegistryConstants.CACHE_TIME_TO_LIVE_MILLIS, "86400000");
-    // // If not passed, uses 86400000 (24
-    // // Hours)
-    // props.put(AWSSchemaRegistryConstants.CACHE_SIZE, "10"); // default value is
-    // 200
-    props.put(AWSSchemaRegistryConstants.COMPATIBILITY_SETTING, Compatibility.FULL); // not passed, uses
-    // props.put(AWSSchemaRegistryConstants.DESCRIPTION, "This registry is used for
-    // several purposes."); // If not passed,
-    // // constructs a
-    // // description
+    // props.put(AWSSchemaRegistryConstants.SCHEMA_NAMING_GENERATION_CLASS,
+    // "com.agilityrobotics.models.protobuf.RecordSchemaNamingStrategy");
+    props.put(AWSSchemaRegistryConstants.COMPATIBILITY_SETTING, Compatibility.FULL);
+    // If COMPRESSION_TYPE is not set, records are sent uncompressed
     // props.put(AWSSchemaRegistryConstants.COMPRESSION_TYPE,
-    // AWSSchemaRegistryConstants.COMPRESSION.ZLIB); // If not
-    // passed,
-    // records are
-    // sent
-    // uncompressed
+    // AWSSchemaRegistryConstants.COMPRESSION.ZLIB);
     return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
   }
 }
