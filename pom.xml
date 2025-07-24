@@ -19,25 +19,19 @@
     <relativePath />
   </parent>
 
-  <repositories>
-    <repository>
-      <id>confluent</id>
-      <url>https://packages.confluent.io/maven/</url>
-    </repository>
-  </repositories>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
-		<groupId>software.amazon.glue</groupId>
-		<artifactId>schema-registry-serde</artifactId>
+        <groupId>software.amazon.glue</groupId>
+        <artifactId>schema-registry-serde</artifactId>
         <version>1.1.24</version>
-	  </dependency>
-      <!--dependency>
-        <groupId>io.confluent</groupId>
-        <artifactId>kafka-protobuf-serializer</artifactId>
-        <version>8.0.0</version>
-      </dependency-->
+        <exclusions>
+          <exclusion>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
       <dependency>
         <groupId>com.google.protobuf</groupId>
         <artifactId>protobuf-java</artifactId>
@@ -53,6 +47,18 @@
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>5.11.4</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>1.21.3</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>kafka</artifactId>
+        <version>1.21.3</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

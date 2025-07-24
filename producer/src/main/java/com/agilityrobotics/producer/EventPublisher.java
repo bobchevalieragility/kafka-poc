@@ -16,7 +16,7 @@ public class EventPublisher {
   }
 
   public void sendMessage(final String topic, final ArcEvent msg) {
-    this.kafkaTemplate.send(topic, msg);
+    this.kafkaTemplate.send(topic, "fake-key", msg);
   }
 
 }
