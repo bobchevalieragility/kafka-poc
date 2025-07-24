@@ -33,8 +33,9 @@
 
   <modules>
     <module>bom</module>
-    <module>consumer</module>
+    <module>common</module>
     <module>models</module>
+    <module>consumer</module>
     <module>producer</module>
   </modules>
 

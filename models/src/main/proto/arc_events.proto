@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package arcevents;
-option java_package = "com.agilityrobotics.models.arcevents";
+option java_package = "com.agilityrobotics.kafkapoc.models.arcevents";
 option java_multiple_files = true;
 option java_generic_services = false;
 option py_generic_services = false;

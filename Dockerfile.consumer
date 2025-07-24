@@ -4,11 +4,12 @@ FROM maven:3.9.10-amazoncorretto-21 AS dependencies
 WORKDIR /app
 COPY pom.xml .
 COPY bom/pom.xml bom/pom.xml
-COPY consumer/pom.xml consumer/pom.xml
 COPY models/pom.xml models/pom.xml
+COPY common/pom.xml common/pom.xml
+COPY consumer/pom.xml consumer/pom.xml
 COPY producer/pom.xml producer/pom.xml
 
-RUN mvn -pl "models,consumer" -B -e org.apache.maven.plugins:maven-dependency-plugin:3.8.1:go-offline -DexcludeArtifacts=models
+RUN mvn -pl "models,common,consumer" -B -e org.apache.maven.plugins:maven-dependency-plugin:3.8.1:go-offline -DexcludeArtifacts=models
 
 # The second stage builds the image
 FROM maven:3.9.10-amazoncorretto-21 AS builder
@@ -16,10 +17,11 @@ FROM maven:3.9.10-amazoncorretto-21 AS builder
 WORKDIR /app
 COPY --from=dependencies /root/.m2 /root/.m2
 COPY --from=dependencies /app /app
-COPY consumer/src /app/consumer/src
 COPY models/src /app/models/src
+COPY common/src /app/common/src
+COPY consumer/src /app/consumer/src
 
-RUN mvn -pl "models,consumer" -B -e clean install -DskipTests
+RUN mvn -pl "models,common,consumer" -B -e clean install -DskipTests
 
 # Okio file extraction doesn't work from within a Spring executable jar so
 # we must extract all of the jar layers and combine them in the next stage

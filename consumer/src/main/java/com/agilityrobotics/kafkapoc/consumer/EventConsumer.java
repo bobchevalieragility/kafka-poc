@@ -1,6 +1,6 @@
-package com.agilityrobotics.consumer;
+package com.agilityrobotics.kafkapoc.consumer;
 
-import com.agilityrobotics.models.arcevents.ArcEvent;
+import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 

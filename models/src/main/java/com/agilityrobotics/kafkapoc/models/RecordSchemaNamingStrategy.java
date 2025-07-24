@@ -1,4 +1,4 @@
-package com.agilityrobotics.models.protobuf;
+package com.agilityrobotics.kafkapoc.models;
 
 import com.amazonaws.services.schemaregistry.common.AWSSchemaNamingStrategy;
 import com.google.protobuf.Message;

@@ -1,8 +1,8 @@
-package com.agilityrobotics.producer;
+package com.agilityrobotics.kafkapoc.producer;
 
-import com.agilityrobotics.models.arcevents.ArcEvent;
-import com.agilityrobotics.models.arcevents.InterventionStart;
-import com.agilityrobotics.models.arcevents.ShiftStart;
+import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
+import com.agilityrobotics.kafkapoc.models.arcevents.InterventionStart;
+import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
 import com.google.protobuf.Timestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

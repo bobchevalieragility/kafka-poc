@@ -1,4 +1,4 @@
-package com.agilityrobotics.producer;
+package com.agilityrobotics.kafkapoc.consumer;
 
 import com.amazonaws.services.schemaregistry.utils.AWSSchemaRegistryConstants;
 import com.amazonaws.services.schemaregistry.utils.ProtobufMessageType;

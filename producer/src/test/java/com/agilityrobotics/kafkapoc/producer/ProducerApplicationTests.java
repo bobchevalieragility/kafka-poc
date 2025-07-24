@@ -1,7 +1,7 @@
-package com.agilityrobotics.producer;
+package com.agilityrobotics.kafkapoc.producer;
 
-import com.agilityrobotics.models.arcevents.ArcEvent;
-import com.agilityrobotics.models.arcevents.ShiftStart;
+import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
+import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
 import com.google.protobuf.Timestamp;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

@@ -1,6 +1,6 @@
-package com.agilityrobotics.consumer;
+package com.agilityrobotics.kafkapoc.consumer;
 
-import com.agilityrobotics.models.arcevents.ArcEvent;
+import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import com.amazonaws.services.schemaregistry.utils.AWSSchemaRegistryConstants;
 import com.amazonaws.services.schemaregistry.utils.ProtobufMessageType;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;

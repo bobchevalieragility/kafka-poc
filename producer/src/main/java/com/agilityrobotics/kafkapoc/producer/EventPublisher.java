@@ -1,6 +1,6 @@
-package com.agilityrobotics.producer;
+package com.agilityrobotics.kafkapoc.producer;
 
-import com.agilityrobotics.models.arcevents.ArcEvent;
+import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
