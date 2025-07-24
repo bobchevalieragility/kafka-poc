@@ -4,18 +4,22 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.agilityrobotics</groupId>
-    <artifactId>kafka-poc</artifactId>
+    <groupId>com.agilityrobotics.kafkapoc</groupId>
+    <artifactId>parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.agilityrobotics</groupId>
+  <groupId>com.agilityrobotics.kafkapoc</groupId>
   <artifactId>producer</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>producer</name>
   <url>http://maven.apache.org</url>
 
   <dependencies>
+    <dependency>
+      <groupId>com.agilityrobotics.kafkapoc</groupId>
+      <artifactId>models</artifactId>
+    </dependency>
     <dependency>
       <groupId>software.amazon.glue</groupId>
       <artifactId>schema-registry-serde</artifactId>
@@ -43,11 +47,6 @@
     <dependency>
       <groupId>org.springframework.kafka</groupId>
       <artifactId>spring-kafka</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.agilityrobotics</groupId>
-      <artifactId>models</artifactId>
-      <version>1.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>

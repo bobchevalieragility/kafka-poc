@@ -3,6 +3,7 @@ FROM maven:3.9.10-amazoncorretto-21 AS dependencies
 
 WORKDIR /app
 COPY pom.xml .
+COPY bom/pom.xml bom/pom.xml
 COPY consumer/pom.xml consumer/pom.xml
 COPY models/pom.xml models/pom.xml
 COPY producer/pom.xml producer/pom.xml
