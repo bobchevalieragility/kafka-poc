@@ -1,0 +1,10 @@
+#!/usr/local/bin/python3.11
+
+import boto3
+
+if __name__ == '__main__':
+    client = boto3.client("glue")
+    client.create_registry(
+        RegistryName="arc-registry",
+        Description="Dummy registry for integration tests"
+    )

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ArcEventConsumer {
 
-  @KafkaListener(topics = "${arc.kafka.arcevents.topic}", containerFactory = "arcEventListenerContainerFactory", groupId = "metrics-service")
+  @KafkaListener(topics = "${arc.kafka.arcevents.topic}", containerFactory = "arcEventListenerContainerFactory", groupId = "${spring.kafka.consumer.group-id}")
   public void listen(ArcEvent msg) {
     switch (msg.getEventCase()) {
       case SHIFT_START:

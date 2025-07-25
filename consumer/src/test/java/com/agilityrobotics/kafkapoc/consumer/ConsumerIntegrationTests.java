@@ -1,11 +1,12 @@
-package com.agilityrobotics.kafkapoc.producer;
+package com.agilityrobotics.kafkapoc.consumer;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
+import com.agilityrobotics.kafkapoc.common.kafka.ArcEventProducer;
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
+import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
+import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -29,14 +27,12 @@ import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext
 @Testcontainers
-class ProducerIntegrationTests {
+class ConsumerIntegrationTests {
 
   @Container
   static KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:3.9.1"));
@@ -64,15 +60,15 @@ class ProducerIntegrationTests {
         schemaRegistryContainer.getMappedPort(3000));
     registry.add("aws.schema.registry.endpoint", () -> endpointUrl);
     registry.add("spring.kafka.bootstrap-servers", () -> kafkaContainer.getBootstrapServers());
-
-    // Add consumer properties for dummy consumer
-    registry.add("spring.kafka.consumer.group-id", () -> "foo");
     registry.add("spring.kafka.consumer.auto-offset-reset", () -> "earliest");
-    registry.add("spring.kafka.consumer.key-deserializer",
-        () -> "org.apache.kafka.common.serialization.StringDeserializer");
-    registry.add("spring.kafka.consumer.value-deserializer",
-        () -> "com.amazonaws.services.schemaregistry.deserializers.GlueSchemaRegistryKafkaDeserializer");
-    registry.add("aws.schema.registry.consumer.protobuf-message-type", () -> "pojo");
+
+    // Add producer properties for dummy producer
+    registry.add("spring.kafka.producer.key-serializer",
+        () -> "org.apache.kafka.common.serialization.StringSerializer");
+    registry.add("spring.kafka.producer.value-serializer",
+        () -> "com.amazonaws.services.schemaregistry.serializers.GlueSchemaRegistryKafkaSerializer");
+    registry.add("aws.schema.registry.producer.compatibility", () -> "full");
+    registry.add("aws.schema.registry.producer.schema-auto-registration-enabled", () -> "true");
   }
 
   @Value("${arc.kafka.arcevents.topic}")
@@ -82,7 +78,7 @@ class ProducerIntegrationTests {
   private MockMvc mockMvc;
 
   @Autowired
-  private ConsumerFactory<String, ArcEvent> consumerFactory;
+  private ArcEventProducer producer;
 
   @BeforeAll
   static void beforeAll() {
@@ -98,37 +94,33 @@ class ProducerIntegrationTests {
     schemaRegistryContainer.execInContainer("/moto/moto_server_init");
   }
 
-  // @Test
-  // void simpleTest() throws InterruptedException {
-  // final ShiftStart shiftEvent = ShiftStart.newBuilder().setFoo("foo").build();
-  // long millis = System.currentTimeMillis();
-  // Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-  // .setNanos((int) ((millis % 1000) * 1000000)).build();
-  // ArcEvent event =
-  // ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
-
-  // String topic = "arc-events";
-  // producer.publish(topic, event);
-
-  // Consumer<String, ArcEvent> consumer = consumerFactory.createConsumer();
-  // consumer.subscribe(List.of(topic));
-  // ConsumerRecord<String, ArcEvent> rec =
-  // KafkaTestUtils.getSingleRecord(consumer, topic);
-  // System.out.println(rec.value().toString());
-  // }
-
   @Test
-  void publishProducesTwoEvents() throws Exception {
-    // mockMvc.perform(post("/publish").contentType(MediaType.APPLICATION_JSON).content("val")).andExpect(status().isOk());
-    mockMvc.perform(post("/publish")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("{\"val\": \"hello\"}"))
-        .andExpect(status().isOk());
+  void simpleTest() {
+    final ShiftStart shiftEvent = ShiftStart.newBuilder().setFoo("foo").build();
+    long millis = System.currentTimeMillis();
+    Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+        .setNanos((int) ((millis % 1000) * 1000000)).build();
+    ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
 
-    Consumer<String, ArcEvent> consumer = consumerFactory.createConsumer();
-    consumer.subscribe(List.of(topic));
-    ConsumerRecords<String, ArcEvent> recs = KafkaTestUtils.getRecords(consumer, Duration.ofSeconds(30), 2);
-    Assertions.assertEquals(2, recs.count(), "Expected 2 records to be published.");
+    producer.publish(topic, event);
+
+    // Wait for the event to be consumed
+    await()
+        .timeout(2, SECONDS)
+        .pollDelay(1, SECONDS)
+        .untilAsserted(() -> Assertions.assertTrue(true));
+    // await()
+    // .pollInterval(Duration.ofSeconds(3))
+    // .atMost(30, SECONDS)
+    // .untilAsserted(() -> {
+    // Optional<Product> optionalProduct = productRepository.findByCode(
+    // "P100"
+    // );
+    // assertThat(optionalProduct).isPresent();
+    // assertThat(optionalProduct.get().getCode()).isEqualTo("P100");
+    // assertThat(optionalProduct.get().getPrice())
+    // .isEqualTo(new BigDecimal("14.50"));
+    // });
   }
 
 }

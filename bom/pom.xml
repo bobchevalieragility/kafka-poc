@@ -36,6 +36,11 @@
         <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>4.3.0</version>
+      </dependency>
+      <dependency>
         <groupId>software.amazon.glue</groupId>
         <artifactId>schema-registry-serde</artifactId>
         <version>1.1.24</version>
