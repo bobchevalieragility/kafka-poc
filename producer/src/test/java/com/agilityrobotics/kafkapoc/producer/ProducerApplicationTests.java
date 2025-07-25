@@ -1,5 +1,6 @@
 package com.agilityrobotics.kafkapoc.producer;
 
+import com.agilityrobotics.kafkapoc.common.kafka.ArcEventProducer;
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
 import com.google.protobuf.Timestamp;
@@ -72,13 +73,12 @@ class ProducerApplicationTests {
   }
 
   @Autowired
-  private EventPublisher publisher;
+  private ArcEventProducer publisher;
 
   @Autowired
   private ConsumerFactory<String, ArcEvent> consumerFactory;
 
   private KafkaMessageListenerContainer<String, ArcEvent> listener;
-  // private BlockingQueue<ArcEvent> messages;
   private BlockingQueue<ConsumerRecord<String, ArcEvent>> messages;
 
   @BeforeAll
@@ -113,7 +113,7 @@ class ProducerApplicationTests {
     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
         .setNanos((int) ((millis % 1000) * 1000000)).build();
     ArcEvent msg = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
-    publisher.sendMessage("arc-events", msg);
+    publisher.publish("arc-events", msg);
 
     ArcEvent event = messages.poll(5, TimeUnit.SECONDS).value();
     System.out.println(event.toString());

@@ -18,6 +18,10 @@
   <dependencies>
     <dependency>
       <groupId>com.agilityrobotics.kafkapoc</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.agilityrobotics.kafkapoc</groupId>
       <artifactId>models</artifactId>
     </dependency>
     <dependency>

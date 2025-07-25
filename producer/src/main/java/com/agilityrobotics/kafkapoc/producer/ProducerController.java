@@ -1,5 +1,6 @@
 package com.agilityrobotics.kafkapoc.producer;
 
+import com.agilityrobotics.kafkapoc.common.kafka.ArcEventProducer;
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import com.agilityrobotics.kafkapoc.models.arcevents.InterventionStart;
 import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
@@ -15,9 +16,13 @@ import java.util.Map;
 public class ProducerController {
 
   @Autowired
-  private final EventPublisher eventPublisher;
+  private ArcEventProducer eventPublisher;
 
-  public ProducerController(EventPublisher eventPublisher) {
+  // @Value("${arc.kafka.arcevents.topic}")
+  // private String topic;
+
+  // TODO remove this constructor?
+  public ProducerController(ArcEventProducer eventPublisher) {
     this.eventPublisher = eventPublisher;
   }
 
@@ -28,15 +33,17 @@ public class ProducerController {
     long millis = System.currentTimeMillis();
     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
         .setNanos((int) ((millis % 1000) * 1000000)).build();
-    ArcEvent msg = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
-    this.eventPublisher.sendMessage("arc-events", msg);
+    ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
+    // TODO make the topic configurable as an application property and move it into
+    // ArcEventPublisher
+    this.eventPublisher.publish("arc-events", event);
 
     final InterventionStart interventionEvent = InterventionStart.newBuilder().setBar(body.get("val")).build();
     millis = System.currentTimeMillis();
     timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
         .setNanos((int) ((millis % 1000) * 1000000)).build();
-    msg = ArcEvent.newBuilder().setId("234").setEventTime(timestamp).setInterventionStart(interventionEvent).build();
-    this.eventPublisher.sendMessage("arc-events", msg);
+    event = ArcEvent.newBuilder().setId("234").setEventTime(timestamp).setInterventionStart(interventionEvent).build();
+    this.eventPublisher.publish("arc-events", event);
   }
 
 }
