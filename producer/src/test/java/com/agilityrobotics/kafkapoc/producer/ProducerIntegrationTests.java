@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 @SpringBootTest
 @DirtiesContext
 @Testcontainers
-class ProducerApplicationTests {
+class ProducerIntegrationTests {
 
   @Container
   static KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:3.9.1"));
@@ -73,7 +73,7 @@ class ProducerApplicationTests {
   }
 
   @Autowired
-  private ArcEventProducer publisher;
+  private ArcEventProducer producer;
 
   @Autowired
   private ConsumerFactory<String, ArcEvent> consumerFactory;
@@ -112,11 +112,12 @@ class ProducerApplicationTests {
     long millis = System.currentTimeMillis();
     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
         .setNanos((int) ((millis % 1000) * 1000000)).build();
-    ArcEvent msg = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
-    publisher.publish("arc-events", msg);
+    ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
 
-    ArcEvent event = messages.poll(5, TimeUnit.SECONDS).value();
-    System.out.println(event.toString());
+    producer.publish("arc-events", event);
+
+    ArcEvent consumedEvent = messages.poll(5, TimeUnit.SECONDS).value();
+    System.out.println(consumedEvent.toString());
     listener.stop();
   }
 
