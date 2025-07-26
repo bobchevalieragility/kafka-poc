@@ -3,6 +3,7 @@ package com.agilityrobotics.kafkapoc.consumer;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
+import com.agilityrobotics.kafkapoc.consumer.repository.MetricsRepository;
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
 import com.google.protobuf.Timestamp;
@@ -18,8 +19,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.InfluxDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.KafkaContainer;
@@ -27,6 +28,8 @@ import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -52,15 +55,28 @@ class ConsumerIntegrationTests {
           MountableFile.forClasspathResource("moto_server_init"),
           "/moto/moto_server_init");
 
+  @SuppressWarnings("resource")
+  @Container
+  static InfluxDBContainer<?> influxDbContainer = new InfluxDBContainer<>(
+      DockerImageName.parse("influxdb:2"))
+      .withOrganization("agility")
+      .withBucket("metrics")
+      .withAdminToken("admin-token");
+
   @DynamicPropertySource
   static void setProperties(final DynamicPropertyRegistry registry) {
-    // Override existing properties
-    String endpointUrl = String.format(
+    String schemaRegistryEndpoint = String.format(
         "http://localhost:%d",
         schemaRegistryContainer.getMappedPort(3000));
-    registry.add("aws.schema.registry.endpoint", () -> endpointUrl);
+    String influxDbEndpoint = String.format(
+        "http://localhost:%d",
+        influxDbContainer.getMappedPort(8086));
+
+    // Override existing properties
+    registry.add("aws.schema.registry.endpoint", () -> schemaRegistryEndpoint);
     registry.add("spring.kafka.bootstrap-servers", () -> kafkaContainer.getBootstrapServers());
     registry.add("spring.kafka.consumer.auto-offset-reset", () -> "earliest");
+    registry.add("arc.influxdb.url", () -> influxDbEndpoint);
 
     // Add producer properties for dummy producer
     registry.add("spring.kafka.producer.key-serializer",
@@ -74,12 +90,11 @@ class ConsumerIntegrationTests {
   @Value("${arc.kafka.arcevents.topic}")
   private String topic;
 
-  // TODO is this necessary?
-  @Autowired
-  private MockMvc mockMvc;
-
   @Autowired
   private KafkaTemplate<String, ArcEvent> producer;
+
+  @Autowired
+  private MetricsRepository repository;
 
   @BeforeAll
   static void beforeAll() {
@@ -106,21 +121,18 @@ class ConsumerIntegrationTests {
 
     // Wait for the event to be consumed
     await()
+        .pollInterval(Duration.ofSeconds(2))
+        .atMost(10, SECONDS)
         .timeout(2, SECONDS)
         .pollDelay(1, SECONDS)
-        .untilAsserted(() -> Assertions.assertTrue(true));
+        .untilAsserted(() -> {
+          List<String> actual = repository.getEvents();
+          Assertions.assertEquals(1, actual.size());
+        });
     // await()
-    // .pollInterval(Duration.ofSeconds(3))
-    // .atMost(30, SECONDS)
-    // .untilAsserted(() -> {
-    // Optional<Product> optionalProduct = productRepository.findByCode(
-    // "P100"
-    // );
-    // assertThat(optionalProduct).isPresent();
-    // assertThat(optionalProduct.get().getCode()).isEqualTo("P100");
-    // assertThat(optionalProduct.get().getPrice())
-    // .isEqualTo(new BigDecimal("14.50"));
-    // });
+    // .timeout(2, SECONDS)
+    // .pollDelay(1, SECONDS)
+    // .untilAsserted(() -> Assertions.assertTrue(true));
   }
 
 }
