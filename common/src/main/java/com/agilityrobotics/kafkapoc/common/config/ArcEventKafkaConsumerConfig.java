@@ -1,6 +1,6 @@
-package com.agilityrobotics.kafkapoc.common.kafka;
+package com.agilityrobotics.kafkapoc.common.config;
 
-import com.agilityrobotics.kafkapoc.common.aws.AwsSchemaRegistryProperties;
+import com.agilityrobotics.kafkapoc.common.properties.AwsSchemaRegistryProperties;
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import com.amazonaws.services.schemaregistry.utils.AWSSchemaRegistryConstants;
 import com.amazonaws.services.schemaregistry.utils.ProtobufMessageType;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-public class ArcEventConsumerConfig {
+public class ArcEventKafkaConsumerConfig {
 
   @Bean
   public ConsumerFactory<String, ArcEvent> arcEventConsumerFactory(

@@ -1,4 +1,4 @@
-package com.agilityrobotics.kafkapoc.common.aws;
+package com.agilityrobotics.kafkapoc.common.properties;
 
 import com.amazonaws.services.schemaregistry.utils.AWSSchemaRegistryConstants;
 import com.amazonaws.services.schemaregistry.utils.ProtobufMessageType;
@@ -13,7 +13,8 @@ import java.util.Map;
 /**
  * Configuration properties for Spring for Amazon Glue Schema Registry.
  *
- * Users should refer to AWS documentation for complete descriptions of these properties.
+ * Users should refer to AWS documentation for complete descriptions of these
+ * properties.
  */
 @ConfigurationProperties(prefix = "aws.schema.registry")
 @Component

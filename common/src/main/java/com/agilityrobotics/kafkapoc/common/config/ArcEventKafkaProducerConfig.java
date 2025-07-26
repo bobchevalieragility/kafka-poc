@@ -1,6 +1,6 @@
-package com.agilityrobotics.kafkapoc.common.kafka;
+package com.agilityrobotics.kafkapoc.common.config;
 
-import com.agilityrobotics.kafkapoc.common.aws.AwsSchemaRegistryProperties;
+import com.agilityrobotics.kafkapoc.common.properties.AwsSchemaRegistryProperties;
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-public class ArcEventProducerConfig {
+public class ArcEventKafkaProducerConfig {
 
   @Bean
   public ProducerFactory<String, ArcEvent> arcEventProducerFactory(
