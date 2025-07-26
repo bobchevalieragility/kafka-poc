@@ -1,4 +1,4 @@
-package com.agilityrobotics.kafkapoc.consumer;
+package com.agilityrobotics.kafkapoc.consumer.controller;
 
 // import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;

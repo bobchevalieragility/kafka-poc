@@ -1,11 +1,11 @@
-package com.agilityrobotics.kafkapoc.consumer;
+package com.agilityrobotics.kafkapoc.consumer.service;
 
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class ArcEventConsumer {
+@Service
+public class ArcEventConsumerService {
 
   @KafkaListener(topics = "${arc.kafka.arcevents.topic}", containerFactory = "arcEventListenerContainerFactory", groupId = "${spring.kafka.consumer.group-id}")
   public void listen(ArcEvent msg) {
