@@ -1,8 +1,9 @@
 package com.agilityrobotics.kafkapoc.consumer.repository;
 
-import org.springframework.stereotype.Repository;
+import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 
-@Repository
-public class MetricsRepository {
+public interface MetricsRepository {
+
+  public void createEvent(ArcEvent event);
 
 }

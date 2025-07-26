@@ -1,6 +1,7 @@
 include:
   - moto/compose.moto.yaml
   - kafka/compose.kafka.yaml
+  - influxdb/compose.influxdb.yaml
 
 services:
   producer:

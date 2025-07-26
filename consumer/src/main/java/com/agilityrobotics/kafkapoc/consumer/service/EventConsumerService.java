@@ -11,17 +11,18 @@ public class EventConsumerService {
   @Autowired
   private MetricsRepository repository;
 
-  public void processEvent(ArcEvent msg) {
-    switch (msg.getEventCase()) {
+  public void processEvent(ArcEvent event) {
+    switch (event.getEventCase()) {
       case SHIFT_START:
-        System.out.println("Consumed a SHIFT_START event: " + msg.getShiftStart().toString());
+        System.out.println("Consumed a SHIFT_START event: " + event.getShiftStart().toString());
         break;
       case INTERVENTION_START:
-        System.out.println("Consumed a INTERVENTION_START event: " + msg.toString());
+        System.out.println("Consumed a INTERVENTION_START event: " + event.toString());
         break;
       default:
         System.out.println("Unexpected type - this shouldn't happen");
     }
+    repository.createEvent(event);
   }
 
 }
