@@ -1,14 +1,17 @@
 package com.agilityrobotics.kafkapoc.consumer.service;
 
+import com.agilityrobotics.kafkapoc.consumer.repository.MetricsRepository;
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
-import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArcEventConsumerService {
+public class EventConsumerService {
 
-  @KafkaListener(topics = "${arc.kafka.arcevents.topic}", containerFactory = "arcEventListenerContainerFactory", groupId = "${spring.kafka.consumer.group-id}")
-  public void listen(ArcEvent msg) {
+  @Autowired
+  private MetricsRepository repository;
+
+  public void processEvent(ArcEvent msg) {
     switch (msg.getEventCase()) {
       case SHIFT_START:
         System.out.println("Consumed a SHIFT_START event: " + msg.getShiftStart().toString());
