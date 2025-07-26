@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 
 import java.util.Map;
 
@@ -16,11 +17,17 @@ import java.util.Map;
 public class ArcEventProducerConfig {
 
   @Bean
-  public KafkaTemplate<String, ArcEvent> arcEventKafkaTemplate(
+  public ProducerFactory<String, ArcEvent> arcEventProducerFactory(
       KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
     Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
     props.putAll(schemaRegistryProperties.buildProducerProperties());
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
+    return new DefaultKafkaProducerFactory<>(props);
+  }
+
+  @Bean
+  public KafkaTemplate<String, ArcEvent> arcEventKafkaTemplate(
+      KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
+    return new KafkaTemplate<>(arcEventProducerFactory(kafkaProperties, schemaRegistryProperties));
   }
 
 }

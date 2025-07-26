@@ -19,21 +19,20 @@ import java.util.Map;
 public class ArcEventConsumerConfig {
 
   @Bean
+  public ConsumerFactory<String, ArcEvent> arcEventConsumerFactory(
+      KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
+    Map<String, Object> props = kafkaProperties.buildConsumerProperties(null);
+    props.putAll(schemaRegistryProperties.buildConsumerProperties());
+    props.put(AWSSchemaRegistryConstants.PROTOBUF_MESSAGE_TYPE, ProtobufMessageType.POJO.getName());
+    return new DefaultKafkaConsumerFactory<>(props);
+  }
+
+  @Bean
   public ConcurrentKafkaListenerContainerFactory<String, ArcEvent> arcEventListenerContainerFactory(
       KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
     ConcurrentKafkaListenerContainerFactory<String, ArcEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(arcEventConsumerFactory(kafkaProperties, schemaRegistryProperties));
     return factory;
-  }
-
-  @Bean
-  public ConsumerFactory<String, ArcEvent> arcEventConsumerFactory(KafkaProperties kafkaProperties,
-      AwsSchemaRegistryProperties schemaRegistryProperties) {
-    Map<String, Object> props = kafkaProperties.buildConsumerProperties(null);
-    props.putAll(schemaRegistryProperties.buildConsumerProperties());
-    props.put(AWSSchemaRegistryConstants.PROTOBUF_MESSAGE_TYPE, ProtobufMessageType.POJO.getName());
-
-    return new DefaultKafkaConsumerFactory<>(props);
   }
 
 }

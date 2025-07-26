@@ -3,7 +3,6 @@ package com.agilityrobotics.kafkapoc.consumer;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
-import com.agilityrobotics.kafkapoc.common.kafka.ArcEventProducer;
 import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
 import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
 import com.google.protobuf.Timestamp;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -74,11 +74,12 @@ class ConsumerIntegrationTests {
   @Value("${arc.kafka.arcevents.topic}")
   private String topic;
 
+  // TODO is this necessary?
   @Autowired
   private MockMvc mockMvc;
 
   @Autowired
-  private ArcEventProducer producer;
+  private KafkaTemplate<String, ArcEvent> producer;
 
   @BeforeAll
   static void beforeAll() {
@@ -101,8 +102,7 @@ class ConsumerIntegrationTests {
     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
         .setNanos((int) ((millis % 1000) * 1000000)).build();
     ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
-
-    producer.publish(topic, event);
+    producer.send(topic, "fake-key", event);
 
     // Wait for the event to be consumed
     await()
