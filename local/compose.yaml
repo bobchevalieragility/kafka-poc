@@ -7,7 +7,7 @@ services:
   producer:
     build:
       context: ../
-      dockerfile: Dockerfile.producer
+      dockerfile: producer/Dockerfile
     ports:
       - "8090:8080"
     environment:
@@ -17,7 +17,7 @@ services:
   consumer:
     build:
       context: ../
-      dockerfile: Dockerfile.consumer
+      dockerfile: consumer/Dockerfile
     ports:
       - "8091:8080"
     environment:
