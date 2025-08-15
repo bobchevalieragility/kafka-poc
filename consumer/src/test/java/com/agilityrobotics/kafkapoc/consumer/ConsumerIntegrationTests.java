@@ -4,10 +4,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
 import com.agilityrobotics.kafkapoc.consumer.repository.MetricsRepository;
-import com.agilityrobotics.models.events.ArcEvent;
 import com.agilityrobotics.models.events.Shift;
 import com.agilityrobotics.models.events.ShiftStarted;
+import com.google.protobuf.Any;
 import com.google.protobuf.Timestamp;
+import io.cloudevents.v1.proto.CloudEvent;
+import io.cloudevents.v1.proto.CloudEvent.CloudEventAttributeValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +94,7 @@ class ConsumerIntegrationTests {
   private String topic;
 
   @Autowired
-  private KafkaTemplate<String, ArcEvent> producer;
+  private KafkaTemplate<String, CloudEvent> producer;
 
   @Autowired
   private MetricsRepository repository;
@@ -119,7 +121,16 @@ class ConsumerIntegrationTests {
     long millis = System.currentTimeMillis();
     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
         .setNanos((int) ((millis % 1000) * 1000000)).build();
-    ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStarted(shiftEvent).build();
+    // ArcEvent event =
+    // ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStarted(shiftEvent).build();
+    CloudEvent event = CloudEvent.newBuilder()
+        .setId("123")
+        .putAttributes("time", CloudEventAttributeValue.newBuilder().setCeTimestamp(timestamp).build())
+        // .putAttributes("dataschema", getDataSchemaAttribute(event))
+        // .setType(fullName)
+        .setProtoData(Any.pack(shiftEvent))
+        // .setSource("kafka-poc-producer")
+        .build();
     producer.send(topic, "fake-key", event);
 
     // Wait for the event to be consumed

@@ -1,9 +1,9 @@
 package com.agilityrobotics.kafkapoc.common.config;
 
 import com.agilityrobotics.kafkapoc.common.properties.AwsSchemaRegistryProperties;
-import com.agilityrobotics.models.events.ArcEvent;
 import com.amazonaws.services.schemaregistry.utils.AWSSchemaRegistryConstants;
 import com.amazonaws.services.schemaregistry.utils.ProtobufMessageType;
+import io.cloudevents.v1.proto.CloudEvent;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class ArcEventKafkaConsumerConfig {
 
   @Bean
-  public ConsumerFactory<String, ArcEvent> arcEventConsumerFactory(
+  public ConsumerFactory<String, CloudEvent> arcEventConsumerFactory(
       KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
     Map<String, Object> props = kafkaProperties.buildConsumerProperties(null);
     props.putAll(schemaRegistryProperties.buildConsumerProperties());
@@ -28,9 +28,9 @@ public class ArcEventKafkaConsumerConfig {
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, ArcEvent> arcEventListenerContainerFactory(
+  public ConcurrentKafkaListenerContainerFactory<String, CloudEvent> arcEventListenerContainerFactory(
       KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
-    ConcurrentKafkaListenerContainerFactory<String, ArcEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    ConcurrentKafkaListenerContainerFactory<String, CloudEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(arcEventConsumerFactory(kafkaProperties, schemaRegistryProperties));
     return factory;
   }

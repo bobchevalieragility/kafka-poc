@@ -3,7 +3,7 @@ package com.agilityrobotics.kafkapoc.producer;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.agilityrobotics.models.events.ArcEvent;
+import io.cloudevents.v1.proto.CloudEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.jupiter.api.Assertions;
@@ -82,7 +82,7 @@ class ProducerIntegrationTests {
   private MockMvc mockMvc;
 
   @Autowired
-  private ConsumerFactory<String, ArcEvent> consumerFactory;
+  private ConsumerFactory<String, CloudEvent> consumerFactory;
 
   @BeforeAll
   static void beforeAll() {
@@ -125,9 +125,9 @@ class ProducerIntegrationTests {
         .content("{\"val\": \"hello\"}"))
         .andExpect(status().isOk());
 
-    Consumer<String, ArcEvent> consumer = consumerFactory.createConsumer();
+    Consumer<String, CloudEvent> consumer = consumerFactory.createConsumer();
     consumer.subscribe(List.of(topic));
-    ConsumerRecords<String, ArcEvent> recs = KafkaTestUtils.getRecords(consumer, Duration.ofSeconds(30), 2);
+    ConsumerRecords<String, CloudEvent> recs = KafkaTestUtils.getRecords(consumer, Duration.ofSeconds(30), 2);
     Assertions.assertEquals(2, recs.count(), "Expected 2 records to be published.");
   }
 

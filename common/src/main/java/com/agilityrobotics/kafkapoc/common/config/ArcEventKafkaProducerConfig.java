@@ -1,7 +1,7 @@
 package com.agilityrobotics.kafkapoc.common.config;
 
 import com.agilityrobotics.kafkapoc.common.properties.AwsSchemaRegistryProperties;
-import com.agilityrobotics.models.events.ArcEvent;
+import io.cloudevents.v1.proto.CloudEvent;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class ArcEventKafkaProducerConfig {
 
   @Bean
-  public ProducerFactory<String, ArcEvent> arcEventProducerFactory(
+  public ProducerFactory<String, CloudEvent> arcEventProducerFactory(
       KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
     Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
     props.putAll(schemaRegistryProperties.buildProducerProperties());
@@ -25,7 +25,7 @@ public class ArcEventKafkaProducerConfig {
   }
 
   @Bean
-  public KafkaTemplate<String, ArcEvent> arcEventKafkaTemplate(
+  public KafkaTemplate<String, CloudEvent> arcEventKafkaTemplate(
       KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
     return new KafkaTemplate<>(arcEventProducerFactory(kafkaProperties, schemaRegistryProperties));
   }
