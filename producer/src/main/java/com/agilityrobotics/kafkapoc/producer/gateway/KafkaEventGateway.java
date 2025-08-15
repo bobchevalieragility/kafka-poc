@@ -1,8 +1,8 @@
 package com.agilityrobotics.kafkapoc.producer.gateway;
 
-import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
-import com.agilityrobotics.kafkapoc.models.arcevents.InterventionStart;
-import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
+import com.agilityrobotics.models.events.ArcEvent;
+import com.agilityrobotics.models.events.InterventionStarted;
+import com.agilityrobotics.models.events.ShiftStarted;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,16 +18,17 @@ public class KafkaEventGateway implements EventGateway {
   private String topic;
 
   @Override
-  public void emitShiftStartEvent(final ShiftStart shiftStart) {
+  public void emitShiftStartEvent(final ShiftStarted shiftStarted) {
     // Publish two different events to the same Kafka topic
-    ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(getTimestamp()).setShiftStart(shiftStart).build();
+    ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(getTimestamp()).setShiftStarted(shiftStarted)
+        .build();
     this.eventProducer.send(this.topic, "fake-key", event);
   }
 
   @Override
-  public void emitInterventionStartEvent(final InterventionStart interventionStart) {
+  public void emitInterventionStartEvent(final InterventionStarted interventionStarted) {
     ArcEvent event = ArcEvent.newBuilder().setId("234").setEventTime(getTimestamp())
-        .setInterventionStart(interventionStart)
+        .setInterventionStarted(interventionStarted)
         .build();
     this.eventProducer.send(this.topic, "fake-key", event);
   }

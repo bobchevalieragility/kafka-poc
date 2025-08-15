@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package events;
+option java_package = "com.agilityrobotics.models.events";
+option java_multiple_files = true;
+option java_generic_services = false;
+option py_generic_services = false;
+
+import "google/protobuf/timestamp.proto";
+
+message ArcEvent {
+  string id = 1;
+  google.protobuf.Timestamp event_time = 2;
+  string source = 3;
+
+  oneof data {
+    SkillStarted skill_started = 4;
+    SkillPaused skill_paused = 5;
+    SkillResumed skill_resumed = 6;
+    SkillCanceled skill_canceled = 7;
+    SkillFailed skill_failed = 8;
+    SkillCompleted skill_completed = 9;
+    WorkflowStarted workflow_started = 10;
+    WorkflowPaused workflow_paused = 11;
+    WorkflowResumed workflow_resumed = 12;
+    WorkflowCanceled workflow_canceled = 13;
+    WorkflowFailed workflow_failed = 14;
+    WorkflowCompleted workflow_completed = 15;
+    ShiftStarted shift_started = 16;
+    ShiftPaused shift_paused = 17;
+    ShiftResumed shift_resumed = 18;
+    ShiftCompleted shift_completed = 19;
+    InterventionStarted intervention_started = 20;
+    InterventionCompleted intervention_completed = 21;
+  }
+}
+
+message SkillStarted {
+  Workflow workflow = 1;
+  string skill_name = 2;
+  map<string, string> params = 3;
+}
+
+message SkillPaused {
+  Workflow workflow = 1;
+  string skill_name = 2;
+}
+
+message SkillResumed {
+  Workflow workflow = 1;
+  string skill_name = 2;
+}
+
+message SkillCanceled {
+  Workflow workflow = 1;
+  string skill_name = 2;
+}
+
+message SkillFailed {
+  Workflow workflow = 1;
+  string skill_name = 2;
+  ErrorDetail error = 3;
+}
+
+message SkillCompleted {
+  Workflow workflow = 1;
+  string skill_name = 2;
+}
+
+message WorkflowStarted {
+  Workflow workflow = 1;
+  string user_id = 2;
+}
+
+message WorkflowPaused {
+  Workflow workflow = 1;
+  string user_id = 2;
+}
+
+message WorkflowResumed {
+  Workflow workflow = 1;
+  string user_id = 2;
+}
+
+message WorkflowCanceled {
+  Workflow workflow = 1;
+  string user_id = 2;
+}
+
+message WorkflowFailed {
+  Workflow workflow = 1;
+  ErrorDetail error = 2;
+}
+
+message WorkflowCompleted {
+  Workflow workflow = 1;
+}
+
+message ShiftStarted {
+  Shift shift = 1;
+}
+
+message ShiftPaused {
+  Shift shift = 1;
+  string user_id = 2;
+}
+
+message ShiftResumed {
+  Shift shift = 1;
+  string user_id = 2;
+}
+
+message ShiftCompleted {
+  Shift shift = 1;
+}
+
+message InterventionStarted {
+  string id = 1;
+  Shift shift = 2;
+  InterventionCategory category = 3;
+  InterventionReason reason = 4;
+  string user_id = 5;
+}
+
+message InterventionCompleted {
+  string id = 1;
+  Shift shift = 2;
+  InterventionCategory category = 3;
+  InterventionReason reason = 4;
+  string user_id = 5;
+}
+
+message ErrorDetail {
+  string title = 1;
+  string detail = 2;
+}
+
+message InterventionCategory {
+  string id = 1;
+  string name = 2;
+}
+
+message InterventionReason {
+  string id = 1;
+  string name = 2;
+}
+
+message Shift {
+  string id = 1;
+  string workcell_id = 2;
+  string org_id = 3;
+  string facility_id = 4;
+}
+
+message Workflow {
+  string id = 1;
+  string workflow_run_id = 2;
+  Shift shift = 3;
+  // TODO are device_id and device_pool_id mutually exclusive? should they be one_of?
+  string device_pool_id = 4;
+  string device_id = 5;
+}

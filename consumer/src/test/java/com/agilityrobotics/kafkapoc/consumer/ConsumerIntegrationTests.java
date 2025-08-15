@@ -4,8 +4,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
 import com.agilityrobotics.kafkapoc.consumer.repository.MetricsRepository;
-import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
-import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
+import com.agilityrobotics.models.events.ArcEvent;
+import com.agilityrobotics.models.events.Shift;
+import com.agilityrobotics.models.events.ShiftStarted;
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -112,11 +113,13 @@ class ConsumerIntegrationTests {
 
   @Test
   void simpleTest() {
-    final ShiftStart shiftEvent = ShiftStart.newBuilder().setFoo("foo").build();
+    final ShiftStarted shiftEvent = ShiftStarted.newBuilder()
+        .setShift(Shift.newBuilder().setFacilityId("fac123").setId("shift123").build())
+        .build();
     long millis = System.currentTimeMillis();
     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
         .setNanos((int) ((millis % 1000) * 1000000)).build();
-    ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
+    ArcEvent event = ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStarted(shiftEvent).build();
     producer.send(topic, "fake-key", event);
 
     // Wait for the event to be consumed

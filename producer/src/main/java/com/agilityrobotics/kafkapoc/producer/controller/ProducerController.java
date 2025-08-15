@@ -1,8 +1,11 @@
 package com.agilityrobotics.kafkapoc.producer.controller;
 
-import com.agilityrobotics.kafkapoc.models.arcevents.InterventionStart;
-import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
 import com.agilityrobotics.kafkapoc.producer.service.EventProducerService;
+import com.agilityrobotics.models.events.InterventionCategory;
+import com.agilityrobotics.models.events.InterventionReason;
+import com.agilityrobotics.models.events.InterventionStarted;
+import com.agilityrobotics.models.events.Shift;
+import com.agilityrobotics.models.events.ShiftStarted;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +21,17 @@ public class ProducerController {
 
   @PostMapping("/publish")
   public void updateAvailability(@RequestBody Map<String, String> body) {
+    final ShiftStarted shiftEvent = ShiftStarted.newBuilder()
+        .setShift(Shift.newBuilder().setFacilityId("fac123").setId("shift123").build())
+        .build();
+    final InterventionStarted interventionEvent = InterventionStarted.newBuilder()
+        .setCategory(InterventionCategory.newBuilder().setId("cat123").setName("CAT01").build())
+        .setReason(InterventionReason.newBuilder().setId("reason123").setName("REASON01").build())
+        .setShift(Shift.newBuilder().setFacilityId("fac123").setId("shift123").build())
+        .build();
     // Publish two different events to the same Kafka topic
-    eventProducerService.emitShiftStartEvent(ShiftStart.newBuilder().setFoo(body.get("val")).build());
-    eventProducerService.emitInterventionStartEvent(InterventionStart.newBuilder().setBar(body.get("val")).build());
+    eventProducerService.emitShiftStartedEvent(shiftEvent);
+    eventProducerService.emitInterventionStartedEvent(interventionEvent);
   }
 
 }

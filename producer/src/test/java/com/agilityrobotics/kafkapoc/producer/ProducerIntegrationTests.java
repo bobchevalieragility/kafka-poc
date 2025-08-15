@@ -3,7 +3,7 @@ package com.agilityrobotics.kafkapoc.producer;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
+import com.agilityrobotics.models.events.ArcEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.jupiter.api.Assertions;

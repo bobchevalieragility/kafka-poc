@@ -1,7 +1,7 @@
 package com.agilityrobotics.kafkapoc.common.config;
 
 import com.agilityrobotics.kafkapoc.common.properties.AwsSchemaRegistryProperties;
-import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
+import com.agilityrobotics.models.events.ArcEvent;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

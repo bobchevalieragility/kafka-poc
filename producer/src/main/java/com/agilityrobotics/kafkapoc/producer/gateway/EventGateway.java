@@ -1,14 +1,14 @@
 package com.agilityrobotics.kafkapoc.producer.gateway;
 
-import com.agilityrobotics.kafkapoc.models.arcevents.InterventionStart;
-import com.agilityrobotics.kafkapoc.models.arcevents.ShiftStart;
+import com.agilityrobotics.models.events.InterventionStarted;
+import com.agilityrobotics.models.events.ShiftStarted;
 import com.google.protobuf.Timestamp;
 
 public interface EventGateway {
 
-  public void emitShiftStartEvent(final ShiftStart shiftStart);
+  public void emitShiftStartEvent(final ShiftStarted shiftStarted);
 
-  public void emitInterventionStartEvent(final InterventionStart interventionStart);
+  public void emitInterventionStartEvent(final InterventionStarted interventionStarted);
 
   default Timestamp getTimestamp() {
     long millis = System.currentTimeMillis();

@@ -1,7 +1,7 @@
 package com.agilityrobotics.kafkapoc.consumer.repository;
 
 import com.agilityrobotics.kafkapoc.consumer.repository.model.EventMeasurement;
-import com.agilityrobotics.kafkapoc.models.arcevents.ArcEvent;
+import com.agilityrobotics.models.events.ArcEvent;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxQLQueryApi;
 import com.influxdb.client.WriteApiBlocking;
