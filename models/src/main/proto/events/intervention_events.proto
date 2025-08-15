@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package events;
+option java_package = "com.agilityrobotics.models.events";
+option java_multiple_files = true;
+option java_generic_services = false;
+option py_generic_services = false;
+
+import "events/shift.proto";
+
+message InterventionStarted {
+  string id = 1;
+  events.Shift shift = 2;
+  InterventionCategory category = 3;
+  InterventionReason reason = 4;
+  string user_id = 5;
+}
+
+message InterventionCompleted {
+  string id = 1;
+  events.Shift shift = 2;
+  InterventionCategory category = 3;
+  InterventionReason reason = 4;
+  string user_id = 5;
+}
+
+message InterventionCategory {
+  string id = 1;
+  string name = 2;
+}
+
+message InterventionReason {
+  string id = 1;
+  string name = 2;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package events;
+option java_package = "com.agilityrobotics.models.events";
+option java_multiple_files = true;
+option java_generic_services = false;
+option py_generic_services = false;
+
+message Shift {
+  string id = 1;
+  string workcell_id = 2;
+  string org_id = 3;
+  string facility_id = 4;
+}

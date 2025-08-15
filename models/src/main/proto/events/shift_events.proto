@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package events;
+option java_package = "com.agilityrobotics.models.events";
+option java_multiple_files = true;
+option java_generic_services = false;
+option py_generic_services = false;
+
+import "events/shift.proto";
+
+message ShiftStarted {
+  Shift shift = 1;
+}
+
+message ShiftPaused {
+  Shift shift = 1;
+  string user_id = 2;
+}
+
+message ShiftResumed {
+  Shift shift = 1;
+  string user_id = 2;
+}
+
+message ShiftCompleted {
+  Shift shift = 1;
+}

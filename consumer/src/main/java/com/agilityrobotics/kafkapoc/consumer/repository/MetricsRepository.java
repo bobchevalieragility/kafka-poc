@@ -1,12 +1,12 @@
 package com.agilityrobotics.kafkapoc.consumer.repository;
 
-import com.agilityrobotics.models.events.ArcEvent;
+import io.cloudevents.v1.proto.CloudEvent;
 
 import java.util.List;
 
 public interface MetricsRepository {
 
-  public void createEvent(ArcEvent event);
+  public void createEvent(CloudEvent event);
 
   public List<String> getEvents();
 }
