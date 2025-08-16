@@ -5,6 +5,7 @@ import static org.awaitility.Awaitility.await;
 
 import com.agilityrobotics.kafkapoc.common.kafka.CloudEventKafkaTemplate;
 import com.agilityrobotics.kafkapoc.consumer.repository.MetricsRepository;
+import com.agilityrobotics.models.events.Organization;
 import com.agilityrobotics.models.events.Shift;
 import com.agilityrobotics.models.events.ShiftStarted;
 import org.junit.jupiter.api.Assertions;
@@ -109,10 +110,12 @@ class ConsumerIntegrationTests {
 
   @Test
   void simpleTest() {
+    final Organization org = Organization.newBuilder().setId("org123").setFacilityId("fac123").build();
     final ShiftStarted shiftEvent = ShiftStarted.newBuilder()
-        .setShift(Shift.newBuilder().setOrgId("org123").setFacilityId("fac123").setId("shift123").build())
+        .setOrg(org)
+        .setShift(Shift.newBuilder().setId("shift123").build())
         .build();
-    producer.sendEvent("test-source", topic, shiftEvent);
+    producer.sendEvent("test-source", topic, org, shiftEvent);
 
     // Wait for the event to be consumed
     await()

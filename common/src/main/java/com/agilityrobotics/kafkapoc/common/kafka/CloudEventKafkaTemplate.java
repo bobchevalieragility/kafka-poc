@@ -1,5 +1,6 @@
 package com.agilityrobotics.kafkapoc.common.kafka;
 
+import com.agilityrobotics.models.events.Organization;
 import com.amazonaws.services.schemaregistry.common.SchemaByDefinitionFetcher;
 import com.amazonaws.services.schemaregistry.serializers.protobuf.ProtobufSerializer;
 import com.amazonaws.services.schemaregistry.utils.AWSSchemaRegistryConstants;
@@ -33,6 +34,7 @@ public class CloudEventKafkaTemplate extends KafkaTemplate<String, CloudEvent> {
   public CompletableFuture<SendResult<String, CloudEvent>> sendEvent(
       final String source,
       final String topic,
+      final Organization org,
       final Message message) {
     String fullName = message.getDescriptorForType().getFullName();
     UUID schemaVersionId = registerSchema(message, fullName);
@@ -46,8 +48,8 @@ public class CloudEventKafkaTemplate extends KafkaTemplate<String, CloudEvent> {
         .setSource(source)
         .build();
 
-    // TODO generate partition key from org and facility
-    return super.send(topic, "fake-key", event);
+    String key = String.join("_", org.getId(), org.getFacilityId());
+    return super.send(topic, key, event);
   }
 
   private UUID registerSchema(final Message message, final String fullName) {

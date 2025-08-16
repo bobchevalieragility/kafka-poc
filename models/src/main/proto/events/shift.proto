@@ -9,6 +9,4 @@ option py_generic_services = false;
 message Shift {
   string id = 1;
   string workcell_id = 2;
-  string org_id = 3;
-  string facility_id = 4;
 }

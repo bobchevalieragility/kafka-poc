@@ -7,33 +7,47 @@ option java_generic_services = false;
 option py_generic_services = false;
 
 import "events/error_detail.proto";
+import "events/organization.proto";
+import "events/shift.proto";
 import "events/workflow.proto";
 
 message WorkflowStarted {
-  Workflow workflow = 1;
-  string user_id = 2;
+  Organization org = 1;
+  Shift shift = 2;
+  Workflow workflow = 3;
+  string user_id = 4;
 }
 
 message WorkflowPaused {
-  Workflow workflow = 1;
-  string user_id = 2;
+  Organization org = 1;
+  Shift shift = 2;
+  Workflow workflow = 3;
+  string user_id = 4;
 }
 
 message WorkflowResumed {
-  Workflow workflow = 1;
-  string user_id = 2;
+  Organization org = 1;
+  Shift shift = 2;
+  Workflow workflow = 3;
+  string user_id = 4;
 }
 
 message WorkflowCanceled {
-  Workflow workflow = 1;
-  string user_id = 2;
+  Organization org = 1;
+  Shift shift = 2;
+  Workflow workflow = 3;
+  string user_id = 4;
 }
 
 message WorkflowFailed {
-  Workflow workflow = 1;
-  ErrorDetail error = 2;
+  Organization org = 1;
+  Shift shift = 2;
+  Workflow workflow = 3;
+  ErrorDetail error = 4;
 }
 
 message WorkflowCompleted {
-  Workflow workflow = 1;
+  Organization org = 1;
+  Shift shift = 2;
+  Workflow workflow = 3;
 }

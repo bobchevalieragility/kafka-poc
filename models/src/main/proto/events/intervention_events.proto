@@ -6,22 +6,25 @@ option java_multiple_files = true;
 option java_generic_services = false;
 option py_generic_services = false;
 
+import "events/organization.proto";
 import "events/shift.proto";
 
 message InterventionStarted {
   string id = 1;
-  events.Shift shift = 2;
-  InterventionCategory category = 3;
-  InterventionReason reason = 4;
-  string user_id = 5;
+  Organization org = 2;
+  Shift shift = 3;
+  InterventionCategory category = 4;
+  InterventionReason reason = 5;
+  string user_id = 6;
 }
 
 message InterventionCompleted {
   string id = 1;
-  events.Shift shift = 2;
-  InterventionCategory category = 3;
-  InterventionReason reason = 4;
-  string user_id = 5;
+  Organization org = 2;
+  Shift shift = 3;
+  InterventionCategory category = 4;
+  InterventionReason reason = 5;
+  string user_id = 6;
 }
 
 message InterventionCategory {
