@@ -3,13 +3,10 @@ package com.agilityrobotics.kafkapoc.consumer;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
+import com.agilityrobotics.kafkapoc.common.kafka.CloudEventKafkaTemplate;
 import com.agilityrobotics.kafkapoc.consumer.repository.MetricsRepository;
 import com.agilityrobotics.models.events.Shift;
 import com.agilityrobotics.models.events.ShiftStarted;
-import com.google.protobuf.Any;
-import com.google.protobuf.Timestamp;
-import io.cloudevents.v1.proto.CloudEvent;
-import io.cloudevents.v1.proto.CloudEvent.CloudEventAttributeValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -71,9 +67,7 @@ class ConsumerIntegrationTests {
     String schemaRegistryEndpoint = String.format(
         "http://localhost:%d",
         schemaRegistryContainer.getMappedPort(3000));
-    String influxDbEndpoint = String.format(
-        "http://localhost:%d",
-        influxDbContainer.getMappedPort(8086));
+    String influxDbEndpoint = String.format("http://localhost:%d", influxDbContainer.getMappedPort(8086));
 
     // Override existing properties
     registry.add("aws.schema.registry.endpoint", () -> schemaRegistryEndpoint);
@@ -94,7 +88,7 @@ class ConsumerIntegrationTests {
   private String topic;
 
   @Autowired
-  private KafkaTemplate<String, CloudEvent> producer;
+  private CloudEventKafkaTemplate producer;
 
   @Autowired
   private MetricsRepository repository;
@@ -116,22 +110,9 @@ class ConsumerIntegrationTests {
   @Test
   void simpleTest() {
     final ShiftStarted shiftEvent = ShiftStarted.newBuilder()
-        .setShift(Shift.newBuilder().setFacilityId("fac123").setId("shift123").build())
+        .setShift(Shift.newBuilder().setOrgId("org123").setFacilityId("fac123").setId("shift123").build())
         .build();
-    long millis = System.currentTimeMillis();
-    Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-        .setNanos((int) ((millis % 1000) * 1000000)).build();
-    // ArcEvent event =
-    // ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStarted(shiftEvent).build();
-    CloudEvent event = CloudEvent.newBuilder()
-        .setId("123")
-        .putAttributes("time", CloudEventAttributeValue.newBuilder().setCeTimestamp(timestamp).build())
-        // .putAttributes("dataschema", getDataSchemaAttribute(event))
-        // .setType(fullName)
-        .setProtoData(Any.pack(shiftEvent))
-        // .setSource("kafka-poc-producer")
-        .build();
-    producer.send(topic, "fake-key", event);
+    producer.sendEvent("test-source", topic, shiftEvent);
 
     // Wait for the event to be consumed
     await()
@@ -143,10 +124,12 @@ class ConsumerIntegrationTests {
           List<String> actual = repository.getEvents();
           Assertions.assertEquals(1, actual.size());
         });
+
+    // Uncomment to wait forever so you can connect to testcontainer for debugging
     // await()
-    // .timeout(2, SECONDS)
-    // .pollDelay(1, SECONDS)
-    // .untilAsserted(() -> Assertions.assertTrue(true));
+    // .forever()
+    // .pollDelay(10, SECONDS)
+    // .untilAsserted(() -> Assertions.assertTrue(false));
   }
 
 }

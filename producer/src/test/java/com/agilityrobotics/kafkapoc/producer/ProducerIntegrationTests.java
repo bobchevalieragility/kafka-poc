@@ -98,25 +98,6 @@ class ProducerIntegrationTests {
     schemaRegistryContainer.execInContainer("/moto/moto_server_init");
   }
 
-  // @Test
-  // void simpleTest() throws InterruptedException {
-  // final ShiftStart shiftEvent = ShiftStart.newBuilder().setFoo("foo").build();
-  // long millis = System.currentTimeMillis();
-  // Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-  // .setNanos((int) ((millis % 1000) * 1000000)).build();
-  // ArcEvent event =
-  // ArcEvent.newBuilder().setId("123").setEventTime(timestamp).setShiftStart(shiftEvent).build();
-
-  // String topic = "arc-events";
-  // producer.publish(topic, event);
-
-  // Consumer<String, ArcEvent> consumer = consumerFactory.createConsumer();
-  // consumer.subscribe(List.of(topic));
-  // ConsumerRecord<String, ArcEvent> rec =
-  // KafkaTestUtils.getSingleRecord(consumer, topic);
-  // System.out.println(rec.value().toString());
-  // }
-
   @Test
   void publishProducesTwoEvents() throws Exception {
     // mockMvc.perform(post("/publish").contentType(MediaType.APPLICATION_JSON).content("val")).andExpect(status().isOk());

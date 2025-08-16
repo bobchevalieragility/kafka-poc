@@ -29,7 +29,7 @@ public class EventConsumerService {
       default:
         System.out.println("Unexpected type - this shouldn't happen: " + event.getType());
     }
-    // repository.createEvent(event);
+    repository.createEvent(event);
   }
 
 }
