@@ -19,6 +19,8 @@ public class EventConsumerService {
       case "events.ShiftStarted":
         ShiftStarted shiftStarted = event.getProtoData().unpack(ShiftStarted.class);
         System.out.println("Consumed a SHIFT_STARTED event: " + shiftStarted.toString());
+        String shiftId = shiftStarted.getShift().getId();
+        System.out.println("ID: " + shiftId);
         break;
       case "events.InterventionStarted":
         InterventionStarted interventionStarted = event.getProtoData().unpack(InterventionStarted.class);

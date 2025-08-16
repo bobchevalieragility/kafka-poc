@@ -16,7 +16,15 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-public class ArcEventKafkaConsumerConfig {
+public class CloudEventKafkaConsumerConfig {
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, CloudEvent> arcEventListenerContainerFactory(
+      KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
+    ConcurrentKafkaListenerContainerFactory<String, CloudEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(arcEventConsumerFactory(kafkaProperties, schemaRegistryProperties));
+    return factory;
+  }
 
   @Bean
   public ConsumerFactory<String, CloudEvent> arcEventConsumerFactory(
@@ -25,14 +33,6 @@ public class ArcEventKafkaConsumerConfig {
     props.putAll(schemaRegistryProperties.buildConsumerProperties());
     props.put(AWSSchemaRegistryConstants.PROTOBUF_MESSAGE_TYPE, ProtobufMessageType.POJO.getName());
     return new DefaultKafkaConsumerFactory<>(props);
-  }
-
-  @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, CloudEvent> arcEventListenerContainerFactory(
-      KafkaProperties kafkaProperties, AwsSchemaRegistryProperties schemaRegistryProperties) {
-    ConcurrentKafkaListenerContainerFactory<String, CloudEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
-    factory.setConsumerFactory(arcEventConsumerFactory(kafkaProperties, schemaRegistryProperties));
-    return factory;
   }
 
 }

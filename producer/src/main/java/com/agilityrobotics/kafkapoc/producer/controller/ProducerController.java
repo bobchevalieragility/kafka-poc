@@ -29,9 +29,10 @@ public class ProducerController {
         .setReason(InterventionReason.newBuilder().setId("reason123").setName("REASON01").build())
         .setShift(Shift.newBuilder().setFacilityId("fac123").setId("shift123").build())
         .build();
-    // Publish two different events to the same Kafka topic
-    eventProducerService.emitShiftStartedEvent(shiftEvent);
-    eventProducerService.emitInterventionStartedEvent(interventionEvent);
+
+    // Publish two different event types to the same Kafka topic
+    eventProducerService.emitCloudEvent(shiftEvent);
+    eventProducerService.emitCloudEvent(interventionEvent);
   }
 
 }
