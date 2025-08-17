@@ -39,6 +39,41 @@
   <build>
     <plugins>
       <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.5.1</version>
+          <executions>
+            <execution>
+              <id>proto-lint</id>
+              <phase>initialize</phase> <!-- Before generate-sources -->
+              <goals>
+                <goal>exec</goal>
+              </goals>
+              <configuration>
+                <executable>bash</executable>
+                <arguments>
+                  <argument>${project.basedir}/scripts/proto-lint-check.sh</argument>
+                </arguments>
+                <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <id>proto-compatibility</id>
+              <phase>initialize</phase> <!-- Before generate-sources -->
+              <goals>
+                <goal>exec</goal>
+              </goals>
+              <configuration>
+                <executable>bash</executable>
+                <arguments>
+                  <argument>${project.basedir}/scripts/proto-compatibility-check.sh</argument>
+                </arguments>
+                <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      <plugin>
         <groupId>io.github.ascopes</groupId>
         <artifactId>protobuf-maven-plugin</artifactId>
         <version>3.6.0</version>
