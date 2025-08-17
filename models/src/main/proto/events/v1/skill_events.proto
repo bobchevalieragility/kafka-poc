@@ -1,53 +1,56 @@
 syntax = "proto3";
 
-package events;
+package events.v1;
 option java_package = "com.agilityrobotics.models.events";
 option java_multiple_files = true;
 option java_generic_services = false;
 option py_generic_services = false;
 
-import "events/error_detail.proto";
-import "events/organization.proto";
-import "events/shift.proto";
-import "events/workflow.proto";
+import "events/v1/error_detail.proto";
+import "events/v1/organization.proto";
+import "events/v1/shift.proto";
+import "events/v1/workflow.proto";
 
-message WorkflowStarted {
+message SkillStarted {
   Organization org = 1;
   Shift shift = 2;
   Workflow workflow = 3;
-  string user_id = 4;
+  string skill_name = 4;
+  map<string, string> params = 5;
 }
 
-message WorkflowPaused {
+message SkillPaused {
   Organization org = 1;
   Shift shift = 2;
   Workflow workflow = 3;
-  string user_id = 4;
+  string skill_name = 4;
 }
 
-message WorkflowResumed {
+message SkillResumed {
   Organization org = 1;
   Shift shift = 2;
   Workflow workflow = 3;
-  string user_id = 4;
+  string skill_name = 4;
 }
 
-message WorkflowCanceled {
+message SkillCanceled {
   Organization org = 1;
   Shift shift = 2;
   Workflow workflow = 3;
-  string user_id = 4;
+  string skill_name = 4;
 }
 
-message WorkflowFailed {
+message SkillFailed {
   Organization org = 1;
   Shift shift = 2;
   Workflow workflow = 3;
-  ErrorDetail error = 4;
+  string skill_name = 4;
+  ErrorDetail error = 5;
 }
 
-message WorkflowCompleted {
+message SkillCompleted {
   Organization org = 1;
   Shift shift = 2;
   Workflow workflow = 3;
+  string skill_name = 4;
 }

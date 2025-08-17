@@ -1,12 +1,15 @@
 syntax = "proto3";
 
-package events;
+package events.v1;
 option java_package = "com.agilityrobotics.models.events";
 option java_multiple_files = true;
 option java_generic_services = false;
 option py_generic_services = false;
 
-message Shift {
+message Workflow {
   string id = 1;
-  string workcell_id = 2;
+  string workflow_run_id = 2;
+  // TODO are device_id and device_pool_id mutually exclusive? should they be one_of?
+  string device_pool_id = 3;
+  string device_id = 4;
 }

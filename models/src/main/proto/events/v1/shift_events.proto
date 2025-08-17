@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package events;
+package events.v1;
 option java_package = "com.agilityrobotics.models.events";
 option java_multiple_files = true;
 option java_generic_services = false;
 option py_generic_services = false;
 
-import "events/organization.proto";
-import "events/shift.proto";
+import "events/v1/organization.proto";
+import "events/v1/shift.proto";
 
 message ShiftStarted {
   Organization org = 1;
