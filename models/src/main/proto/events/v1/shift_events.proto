@@ -6,27 +6,27 @@ option java_multiple_files = true;
 option java_generic_services = false;
 option py_generic_services = false;
 
-import "events/v1/organization.proto";
+import "events/v1/facility.proto";
 import "events/v1/shift.proto";
 
 message ShiftStarted {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
 }
 
 message ShiftPaused {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
   string user_id = 3;
 }
 
 message ShiftResumed {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
   string user_id = 3;
 }
 
-message ShiftCompleted {
-  Organization org = 1;
+message ShiftEnded {
+  Facility facility = 1;
   Shift shift = 2;
 }

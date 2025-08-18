@@ -6,21 +6,21 @@ option java_multiple_files = true;
 option java_generic_services = false;
 option py_generic_services = false;
 
-import "events/v1/organization.proto";
+import "events/v1/facility.proto";
 import "events/v1/shift.proto";
 
 message InterventionStarted {
   string id = 1;
-  Organization org = 2;
+  Facility facility = 2;
   Shift shift = 3;
   InterventionCategory category = 4;
   InterventionReason reason = 5;
   string user_id = 6;
 }
 
-message InterventionCompleted {
+message InterventionEnded {
   string id = 1;
-  Organization org = 2;
+  Facility facility = 2;
   Shift shift = 3;
   InterventionCategory category = 4;
   InterventionReason reason = 5;

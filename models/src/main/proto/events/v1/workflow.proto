@@ -9,7 +9,6 @@ option py_generic_services = false;
 message Workflow {
   string id = 1;
   string workflow_run_id = 2;
-  // TODO are device_id and device_pool_id mutually exclusive? should they be one_of?
   string device_pool_id = 3;
   string device_id = 4;
 }

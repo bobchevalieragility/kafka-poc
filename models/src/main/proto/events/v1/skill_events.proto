@@ -7,41 +7,42 @@ option java_generic_services = false;
 option py_generic_services = false;
 
 import "events/v1/error_detail.proto";
-import "events/v1/organization.proto";
+import "events/v1/facility.proto";
 import "events/v1/shift.proto";
 import "events/v1/workflow.proto";
+import "google/protobuf/struct.proto";
 
 message SkillStarted {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
   Workflow workflow = 3;
   string skill_name = 4;
-  map<string, string> params = 5;
+  google.protobuf.Struct params = 5;
 }
 
 message SkillPaused {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
   Workflow workflow = 3;
   string skill_name = 4;
 }
 
 message SkillResumed {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
   Workflow workflow = 3;
   string skill_name = 4;
 }
 
 message SkillCanceled {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
   Workflow workflow = 3;
   string skill_name = 4;
 }
 
 message SkillFailed {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
   Workflow workflow = 3;
   string skill_name = 4;
@@ -49,7 +50,7 @@ message SkillFailed {
 }
 
 message SkillCompleted {
-  Organization org = 1;
+  Facility facility = 1;
   Shift shift = 2;
   Workflow workflow = 3;
   string skill_name = 4;

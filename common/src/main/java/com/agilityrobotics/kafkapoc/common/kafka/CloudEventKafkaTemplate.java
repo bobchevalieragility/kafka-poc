@@ -1,6 +1,6 @@
 package com.agilityrobotics.kafkapoc.common.kafka;
 
-import com.agilityrobotics.models.events.Organization;
+import com.agilityrobotics.models.events.Facility;
 import com.google.protobuf.Message;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
@@ -24,7 +24,7 @@ public class CloudEventKafkaTemplate extends KafkaTemplate<String, CloudEvent> {
   public CompletableFuture<SendResult<String, CloudEvent>> sendEvent(
       final String source,
       final String topic,
-      final Organization org,
+      final Facility facility,
       final Message message) {
 
     String fullName = message.getDescriptorForType().getFullName();
@@ -37,7 +37,7 @@ public class CloudEventKafkaTemplate extends KafkaTemplate<String, CloudEvent> {
         .withDataContentType(ProtobufFormat.PROTO_DATA_CONTENT_TYPE)
         .build();
 
-    String key = String.join("_", org.getId(), org.getFacilityId());
+    String key = String.join("_", facility.getOrgId(), facility.getId());
     return super.send(topic, key, event);
   }
 
