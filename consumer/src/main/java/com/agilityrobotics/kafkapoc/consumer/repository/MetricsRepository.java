@@ -1,6 +1,6 @@
 package com.agilityrobotics.kafkapoc.consumer.repository;
 
-import io.cloudevents.v1.proto.CloudEvent;
+import io.cloudevents.CloudEvent;
 
 import java.util.List;
 

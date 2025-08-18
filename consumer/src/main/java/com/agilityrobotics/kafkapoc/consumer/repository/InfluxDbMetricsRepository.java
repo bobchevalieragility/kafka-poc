@@ -1,14 +1,13 @@
 package com.agilityrobotics.kafkapoc.consumer.repository;
 
 import com.agilityrobotics.kafkapoc.consumer.repository.model.EventMeasurement;
-import com.google.protobuf.Timestamp;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxQLQueryApi;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.InfluxQLQuery;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.query.InfluxQLQueryResult;
-import io.cloudevents.v1.proto.CloudEvent;
+import io.cloudevents.CloudEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -34,8 +33,7 @@ public class InfluxDbMetricsRepository implements MetricsRepository {
 
   @Override
   public void createEvent(CloudEvent event) {
-    Timestamp eventTime = event.getAttributesMap().get("time").getCeTimestamp();
-    Instant instant = Instant.ofEpochSecond(eventTime.getSeconds(), eventTime.getNanos());
+    Instant instant = event.getTime().toInstant();
     EventMeasurement measurement = new EventMeasurement(instant, event.getType(), "ON");
     this.writer.writeMeasurement(WritePrecision.NS, measurement);
   }

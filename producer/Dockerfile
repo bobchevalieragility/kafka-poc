@@ -21,7 +21,7 @@ COPY models/src /app/models/src
 COPY common/src /app/common/src
 COPY producer/src /app/producer/src
 
-RUN mvn -pl "models,common,producer" -B -e clean install -DskipTests
+RUN mvn -pl "models,common,producer" -B -e clean install -DskipTests -Dexec.skip
 
 # The third stage prepares the runtime environment
 FROM openjdk:21-slim

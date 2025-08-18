@@ -63,6 +63,11 @@
         <version>4.0.1</version>
       </dependency>
       <dependency>
+        <groupId>io.cloudevents</groupId>
+        <artifactId>cloudevents-kafka</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+      <dependency>
         <groupId>com.influxdb</groupId>
         <artifactId>influxdb-client-java</artifactId>
         <version>7.2.0</version>

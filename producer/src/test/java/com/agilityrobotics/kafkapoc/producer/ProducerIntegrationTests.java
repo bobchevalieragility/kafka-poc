@@ -3,12 +3,11 @@ package com.agilityrobotics.kafkapoc.producer;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import io.cloudevents.v1.proto.CloudEvent;
+import io.cloudevents.CloudEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,14 +20,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
-import org.testcontainers.utility.MountableFile;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
@@ -41,28 +37,28 @@ class ProducerIntegrationTests {
   @Container
   static KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:3.9.1"));
 
-  @SuppressWarnings("resource")
-  @Container
-  static GenericContainer<?> schemaRegistryContainer = new GenericContainer<>(
-      DockerImageName.parse("motoserver/moto"))
-      .withAccessToHost(true)
-      .withExposedPorts(3000)
-      .withEnv("MOTO_PORT", "3000")
-      .withEnv("AWS_DEFAULT_REGION", "us-west-2")
-      .withEnv("AWS_ACCESS_KEY_ID", "test")
-      .withEnv("AWS_SECRET_ACCESS_KEY", "test")
-      .withEnv("AWS_ENDPOINT_URL", "http://localhost:3000")
-      .withCopyFileToContainer(
-          MountableFile.forClasspathResource("moto_server_init"),
-          "/moto/moto_server_init");
+  // @SuppressWarnings("resource")
+  // @Container
+  // static GenericContainer<?> schemaRegistryContainer = new GenericContainer<>(
+  // DockerImageName.parse("motoserver/moto"))
+  // .withAccessToHost(true)
+  // .withExposedPorts(3000)
+  // .withEnv("MOTO_PORT", "3000")
+  // .withEnv("AWS_DEFAULT_REGION", "us-west-2")
+  // .withEnv("AWS_ACCESS_KEY_ID", "test")
+  // .withEnv("AWS_SECRET_ACCESS_KEY", "test")
+  // .withEnv("AWS_ENDPOINT_URL", "http://localhost:3000")
+  // .withCopyFileToContainer(
+  // MountableFile.forClasspathResource("moto_server_init"),
+  // "/moto/moto_server_init");
 
   @DynamicPropertySource
   static void setProperties(final DynamicPropertyRegistry registry) {
     // Override existing properties
-    String endpointUrl = String.format(
-        "http://localhost:%d",
-        schemaRegistryContainer.getMappedPort(3000));
-    registry.add("aws.schema.registry.endpoint", () -> endpointUrl);
+    // String endpointUrl = String.format(
+    // "http://localhost:%d",
+    // schemaRegistryContainer.getMappedPort(3000));
+    // registry.add("aws.schema.registry.endpoint", () -> endpointUrl);
     registry.add("spring.kafka.bootstrap-servers", () -> kafkaContainer.getBootstrapServers());
 
     // Add consumer properties for dummy consumer
@@ -70,9 +66,13 @@ class ProducerIntegrationTests {
     registry.add("spring.kafka.consumer.auto-offset-reset", () -> "earliest");
     registry.add("spring.kafka.consumer.key-deserializer",
         () -> "org.apache.kafka.common.serialization.StringDeserializer");
+    // registry.add("aws.schema.registry.consumer.protobuf-message-type", () ->
+    // "pojo");
+    // registry.add("spring.kafka.consumer.value-deserializer",
+    // () ->
+    // "com.amazonaws.services.schemaregistry.deserializers.GlueSchemaRegistryKafkaDeserializer");
     registry.add("spring.kafka.consumer.value-deserializer",
-        () -> "com.amazonaws.services.schemaregistry.deserializers.GlueSchemaRegistryKafkaDeserializer");
-    registry.add("aws.schema.registry.consumer.protobuf-message-type", () -> "pojo");
+        () -> "io.cloudevents.kafka.CloudEventDeserializer");
   }
 
   @Value("${arc.kafka.arcevents.topic}")
@@ -91,16 +91,17 @@ class ProducerIntegrationTests {
     System.setProperty("aws.secretAccessKey", "test");
   }
 
-  @BeforeEach
-  void beforeEach() throws IOException, InterruptedException {
-    // Create a registry named 'arc-registry' in the Glue Schema Registry container
-    schemaRegistryContainer.execInContainer("chmod", "+x", "/moto/moto_server_init");
-    schemaRegistryContainer.execInContainer("/moto/moto_server_init");
-  }
+  // @BeforeEach
+  // void beforeEach() throws IOException, InterruptedException {
+  // // Create a registry named 'arc-registry' in the Glue Schema Registry
+  // container
+  // schemaRegistryContainer.execInContainer("chmod", "+x",
+  // "/moto/moto_server_init");
+  // schemaRegistryContainer.execInContainer("/moto/moto_server_init");
+  // }
 
   @Test
   void publishProducesTwoEvents() throws Exception {
-    // mockMvc.perform(post("/publish").contentType(MediaType.APPLICATION_JSON).content("val")).andExpect(status().isOk());
     mockMvc.perform(post("/publish")
         .contentType(MediaType.APPLICATION_JSON)
         .content("{\"val\": \"hello\"}"))

@@ -21,7 +21,7 @@ COPY models/src /app/models/src
 COPY common/src /app/common/src
 COPY consumer/src /app/consumer/src
 
-RUN mvn -pl "models,common,consumer" -B -e clean install -DskipTests
+RUN mvn -pl "models,common,consumer" -B -e clean install -DskipTests -Dexec.skip
 
 # Okio file extraction doesn't work from within a Spring executable jar so
 # we must extract all of the jar layers and combine them in the next stage
