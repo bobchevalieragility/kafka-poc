@@ -17,11 +17,13 @@ FROM maven:3.9.10-amazoncorretto-21 AS builder
 WORKDIR /app
 COPY --from=dependencies /root/.m2 /root/.m2
 COPY --from=dependencies /app /app
+COPY buf.yaml .
+COPY buf.gen.yaml .
 COPY models/src /app/models/src
 COPY common/src /app/common/src
 COPY producer/src /app/producer/src
 
-RUN mvn -pl "models,common,producer" -B -e clean install -DskipTests -Dexec.skip
+RUN mvn -pl "models,common,producer" -B -e clean install -DskipTests -DskipProtoChecks
 
 # The third stage prepares the runtime environment
 FROM openjdk:21-slim

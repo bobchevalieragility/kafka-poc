@@ -86,6 +86,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
+              <skip>${skipProtoChecks}</skip>
               <executable>${project.build.directory}/downloads/buf</executable>
               <arguments>
                 <argument>lint</argument>
@@ -100,6 +101,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
+              <skip>${skipProtoChecks}</skip>
               <executable>${project.build.directory}/downloads/buf</executable>
               <arguments>
                 <argument>breaking</argument>
@@ -147,25 +149,29 @@
   </build>
   <profiles>
     <profile>
-      <id>aarch64</id>
+      <id>mac-aarch64</id>
       <activation>
         <os>
+          <family>mac</family>
           <arch>aarch64</arch>
         </os>
       </activation>
       <properties>
+        <buf.os>Darwin</buf.os>
         <buf.arch>arm64</buf.arch>
       </properties>
     </profile>
     <profile>
-      <id>mac</id>
+      <id>unix-aarch64</id>
       <activation>
         <os>
-          <family>mac</family>
+          <family>unix</family>
+          <arch>aarch64</arch>
         </os>
       </activation>
       <properties>
-        <buf.os>Darwin</buf.os>
+        <buf.os>Linux</buf.os>
+        <buf.arch>aarch64</buf.arch>
       </properties>
     </profile>
   </profiles>

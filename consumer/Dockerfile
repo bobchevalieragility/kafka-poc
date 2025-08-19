@@ -17,11 +17,13 @@ FROM maven:3.9.10-amazoncorretto-21 AS builder
 WORKDIR /app
 COPY --from=dependencies /root/.m2 /root/.m2
 COPY --from=dependencies /app /app
+COPY buf.yaml .
+COPY buf.gen.yaml .
 COPY models/src /app/models/src
 COPY common/src /app/common/src
 COPY consumer/src /app/consumer/src
 
-RUN mvn -pl "models,common,consumer" -B -e clean install -DskipTests -Dexec.skip
+RUN mvn -pl "models,common,consumer" -B -e clean install -DskipTests -DskipProtoChecks
 
 # Okio file extraction doesn't work from within a Spring executable jar so
 # we must extract all of the jar layers and combine them in the next stage
