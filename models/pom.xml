@@ -10,7 +10,10 @@
   <url>http://maven.apache.org</url>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
     <protobuf.version>3.25.8</protobuf.version>
+    <buf.version>v1.56.0</buf.version>
   </properties>
 
   <dependencyManagement>
@@ -35,83 +38,136 @@
       <artifactId>protobuf-java</artifactId>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>3.5.1</version>
-          <executions>
-            <execution>
-              <id>proto-lint</id>
-              <phase>initialize</phase> <!-- Before generate-sources -->
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <configuration>
-                <executable>bash</executable>
-                <arguments>
-                  <argument>${project.basedir}/scripts/proto-lint-check.sh</argument>
-                </arguments>
-                <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
-              </configuration>
-            </execution>
-            <execution>
-              <id>proto-compatibility</id>
-              <phase>initialize</phase> <!-- Before generate-sources -->
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <configuration>
-                <executable>bash</executable>
-                <arguments>
-                  <argument>${project.basedir}/scripts/proto-compatibility-check.sh</argument>
-                </arguments>
-                <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-      <plugin>
-        <groupId>io.github.ascopes</groupId>
-        <artifactId>protobuf-maven-plugin</artifactId>
-        <version>3.6.0</version>
-
+        <groupId>io.github.download-maven-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <version>2.0.0</version>
         <executions>
           <execution>
-            <id>java</id>
+            <id>buf-download</id>
+            <phase>initialize</phase>
             <goals>
-              <goal>generate</goal>
+              <goal>wget</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <url>https://github.com/bufbuild/buf/releases/download/${buf.version}/buf-${buf.os}-${buf.arch}</url>
+          <outputDirectory>${project.build.directory}/downloads</outputDirectory>
+          <outputFileName>buf</outputFileName>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.1</version>
+        <executions>
+          <execution>
+            <id>buf-chmod</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>exec</goal>
             </goals>
             <configuration>
-              <protocVersion>${protobuf.version}</protocVersion>
-              <sourceDirectories>
-                <sourceDirectory>src/main/proto</sourceDirectory>
-              </sourceDirectories>
-              <outputDirectory>${project.basedir}/target/generated-sources/protobuf/java</outputDirectory>
+              <executable>chmod</executable>
+              <arguments>
+                <argument>+x</argument>
+                <argument>${project.build.directory}/downloads/buf</argument>
+              </arguments>
+              <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
             </configuration>
           </execution>
-
           <execution>
-            <id>python</id>
+            <id>buf-lint</id>
+            <phase>initialize</phase>
             <goals>
-              <goal>generate</goal>
+              <goal>exec</goal>
             </goals>
             <configuration>
-              <protocVersion>${protobuf.version}</protocVersion>
-              <javaEnabled>false</javaEnabled>
-              <pythonEnabled>true</pythonEnabled>
-              <sourceDirectories>
-                <sourceDirectory>src/main/proto</sourceDirectory>
-              </sourceDirectories>
-              <outputDirectory>${project.basedir}/target/generated-sources/protobuf/python</outputDirectory>
+              <executable>${project.build.directory}/downloads/buf</executable>
+              <arguments>
+                <argument>lint</argument>
+              </arguments>
+              <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>buf-compatibility</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${project.build.directory}/downloads/buf</executable>
+              <arguments>
+                <argument>breaking</argument>
+                <argument>--against</argument>
+                <argument>.git#branch=main,subdir=models/src/main/proto</argument>
+              </arguments>
+              <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>buf-generate</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${project.build.directory}/downloads/buf</executable>
+              <arguments>
+                <argument>generate</argument>
+              </arguments>
+              <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
             </configuration>
           </execution>
         </executions>
-
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/protobuf/java/</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>aarch64</id>
+      <activation>
+        <os>
+          <arch>aarch64</arch>
+        </os>
+      </activation>
+      <properties>
+        <buf.arch>arm64</buf.arch>
+      </properties>
+    </profile>
+    <profile>
+      <id>mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <buf.os>Darwin</buf.os>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>

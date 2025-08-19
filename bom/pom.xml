@@ -12,8 +12,12 @@
   <url>http://www.example.com</url>
 
   <properties>
-    <!--protobuf.version>4.31.1</protobuf.version-->
-    <protobuf.version>3.25.8</protobuf.version>
+    <!-- protobuf.version must be compatibile with versions of -->
+    <!-- Buf plugins specified in buf.gen.yaml -->
+    <!-- See  https://buf.build/protocolbuffers/java -->
+    <!-- See  https://buf.build/protocolbuffers/python -->
+    <protobuf.version>4.32.0</protobuf.version>
+    <!-- <protobuf.version>3.25.8</protobuf.version> -->
     <testcontainers.version>1.21.3</testcontainers.version>
   </properties>
 

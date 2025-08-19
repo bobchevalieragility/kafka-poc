@@ -1,0 +1,10 @@
+version: v2
+managed:
+  enabled: false
+plugins:
+  - remote: buf.build/protocolbuffers/java:v32.0
+    out: models/target/generated-sources/protobuf/java
+  - remote: buf.build/protocolbuffers/python:v32.0
+    out: models/target/generated-sources/protobuf/python
+inputs:
+  - directory: models/src/main/proto
