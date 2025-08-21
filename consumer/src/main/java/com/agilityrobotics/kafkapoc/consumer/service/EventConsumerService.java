@@ -1,8 +1,8 @@
 package com.agilityrobotics.kafkapoc.consumer.service;
 
 import com.agilityrobotics.kafkapoc.consumer.repository.MetricsRepository;
-import com.agilityrobotics.models.events.InterventionStarted;
-import com.agilityrobotics.models.events.ShiftStarted;
+import com.agilityrobotics.models.events.v1.InterventionStarted;
+import com.agilityrobotics.models.events.v1.ShiftStarted;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.cloudevents.CloudEvent;

@@ -1,6 +1,6 @@
 package com.agilityrobotics.kafkapoc.common.kafka;
 
-import com.agilityrobotics.models.events.Facility;
+import com.agilityrobotics.models.events.v1.Facility;
 import com.google.protobuf.Message;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;

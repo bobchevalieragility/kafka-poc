@@ -5,9 +5,9 @@ import static org.awaitility.Awaitility.await;
 
 import com.agilityrobotics.kafkapoc.common.kafka.CloudEventKafkaTemplate;
 import com.agilityrobotics.kafkapoc.consumer.repository.MetricsRepository;
-import com.agilityrobotics.models.events.Facility;
-import com.agilityrobotics.models.events.Shift;
-import com.agilityrobotics.models.events.ShiftStarted;
+import com.agilityrobotics.models.events.v1.Facility;
+import com.agilityrobotics.models.events.v1.Shift;
+import com.agilityrobotics.models.events.v1.ShiftStarted;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

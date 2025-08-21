@@ -1,12 +1,12 @@
 package com.agilityrobotics.kafkapoc.producer.controller;
 
 import com.agilityrobotics.kafkapoc.producer.service.EventProducerService;
-import com.agilityrobotics.models.events.Facility;
-import com.agilityrobotics.models.events.InterventionCategory;
-import com.agilityrobotics.models.events.InterventionReason;
-import com.agilityrobotics.models.events.InterventionStarted;
-import com.agilityrobotics.models.events.Shift;
-import com.agilityrobotics.models.events.ShiftStarted;
+import com.agilityrobotics.models.events.v1.Facility;
+import com.agilityrobotics.models.events.v1.InterventionCategory;
+import com.agilityrobotics.models.events.v1.InterventionReason;
+import com.agilityrobotics.models.events.v1.InterventionStarted;
+import com.agilityrobotics.models.events.v1.Shift;
+import com.agilityrobotics.models.events.v1.ShiftStarted;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

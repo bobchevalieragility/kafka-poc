@@ -1,7 +1,7 @@
 package com.agilityrobotics.kafkapoc.producer.service;
 
 import com.agilityrobotics.kafkapoc.common.kafka.CloudEventKafkaTemplate;
-import com.agilityrobotics.models.events.Facility;
+import com.agilityrobotics.models.events.v1.Facility;
 import com.google.protobuf.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
